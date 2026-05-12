@@ -1,0 +1,331 @@
+---
+import MermaidLoader from '../../components/MermaidLoader.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const homeHref = import.meta.env.BASE_URL;
+const basePath = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const frameworkHref = `${basePath}framework/`;
+const pomdpHref = `${basePath}modeling/pomdp/`;
+
+const tupleRows = [
+  {
+    component: 'States',
+    symbol: 'S',
+    meaning:
+      'The visible operating condition: case stage, queue age, evidence score, corroboration depth, reviewer load, conflict flags, escrow status, and public-interest tier.',
+  },
+  {
+    component: 'Actions',
+    symbol: 'A',
+    meaning:
+      'Control moves the institution can take: request evidence, verify identity, merge duplicates, assign reviewers, hold for audit, escalate, release escrow, publish, seal, or close.',
+  },
+  {
+    component: 'Transitions',
+    symbol: 'T(s_next | s, a)',
+    meaning:
+      'The probability that an action changes the case and system state: evidence improves, a conflict appears, a queue clears, support stalls, funding matures, or a case exits.',
+  },
+  {
+    component: 'Rewards',
+    symbol: 'R(s, a)',
+    meaning:
+      'The value function: surface credible corruption, protect due process, reduce delay, avoid false accusations, preserve independence, and resist manipulation.',
+  },
+  {
+    component: 'Policy',
+    symbol: 'pi(s)',
+    meaning:
+      'A published rule mapping the current state to the next control action, with auditable thresholds rather than ad hoc discretion.',
+  },
+];
+
+const stateCards = [
+  {
+    title: 'Case state',
+    body:
+      'Where the matter is in the pipeline, how old it is, which tier it occupies, what evidence has been supplied, and whether the defendant-conduct-window scope is stable.',
+  },
+  {
+    title: 'System state',
+    body:
+      'Queue lengths, reviewer availability, conflict strike rates, escrow balances, case mix, time-to-resolution, and judge-pool capacity.',
+  },
+  {
+    title: 'Reviewer state',
+    body:
+      'Eligibility, expertise, workload, conflicts, recusal history, prior stage exposure, and audit performance. The controller chooses assignment rules, not favored people.',
+  },
+  {
+    title: 'Public signal state',
+    body:
+      'Verified support, funding progress, signer growth, duplicate campaigns, media salience, and signals that public attention is organic or suspiciously coordinated.',
+  },
+];
+
+const controls = [
+  {
+    eyebrow: 'Admission',
+    title: 'Route or reject filings',
+    body:
+      'The MDP decides whether a filing should be normalized, consolidated with an existing matter, held for missing detail, admitted for review, or closed before it consumes capacity.',
+  },
+  {
+    eyebrow: 'Review',
+    title: 'Assign the next panel',
+    body:
+      'At each stage, the policy selects a pre-published assignment rule using eligibility, conflicts, load, and stage fit. The draw remains random inside the permitted pool.',
+  },
+  {
+    eyebrow: 'Funding',
+    title: 'Release escrow deliberately',
+    body:
+      'Escrow moves only when the case has crossed explicit gates for maturity, process integrity, and legal viability, rather than because attention is high.',
+  },
+  {
+    eyebrow: 'Operations',
+    title: 'Control queues and capacity',
+    body:
+      'The controller can expedite, defer, add reserve reviewers, rebalance stage queues, or slow a case when haste would damage legitimacy.',
+  },
+];
+
+const stageControls = [
+  {
+    stage: 'Submission',
+    state:
+      'Complaint completeness, named actors, conduct window, benefit flow, harmed group, identity checks, and early evidence score.',
+    action:
+      'Request missing fields, merge duplicates, verify identity, hold for support, or close an underspecified filing.',
+  },
+  {
+    stage: 'Validation',
+    state:
+      'Corroboration depth, metadata quality, signer verification, duplicate detection, support pattern, and audit flags.',
+    action:
+      'Normalize evidence, raise verification, trigger audit, require independent corroboration, or prepare the record for admission review.',
+  },
+  {
+    stage: 'Admission review',
+    state:
+      'Mature case record, reviewer capacity, conflicts, legal viability score, manipulation alerts, and escalation threshold.',
+    action:
+      'Assign a fresh panel, escalate, reject, request a targeted supplement, or publish a limited status update.',
+  },
+  {
+    stage: 'Trial and remedies',
+    state:
+      'Panel availability, escrow status, record readiness, remedy fit, expected duration, and legitimacy risk.',
+    action:
+      'Seat the panel, release funds, manage disclosure, schedule deliberation, select remedy workflow, or close with findings.',
+  },
+];
+---
+
+<BaseLayout
+  title="USACC Modeling | MDP"
+  description="How a Markov Decision Process can model the US Anti-Corruption Court as a staged control system for routing, review, funding, and capacity decisions."
+>
+  <Fragment slot="head">
+    <MermaidLoader />
+  </Fragment>
+
+  <header class="subpage-hero">
+    <div class="container">
+      <a class="back-link" href={homeHref}>Back to home</a>
+      <p class="section-kicker">Modeling / MDP</p>
+      <h1>The court as a Markov Decision Process.</h1>
+      <p class="lede narrow">
+        An MDP is the clean operating model for USACC when the relevant state is visible enough
+        to control. It treats the court as a staged decision system: observe the current case and
+        queue state, choose the next institutional action, measure the outcome, and improve the
+        policy over time.
+      </p>
+      <div class="page-actions">
+        <a class="button button-primary" href={pomdpHref}>Compare the POMDP</a>
+        <a class="button button-secondary" href={frameworkHref}>Read the framework</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container article-shell">
+        <article class="quote-card">
+          <p>
+            The MDP does not decide guilt. It controls the process around a case: routing,
+            verification, reviewer assignment, funding gates, disclosure, and capacity.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Plain-English Model</p>
+          <h2>USACC is a sequence of control choices under published rules.</h2>
+          <p>
+            A corruption court does not simply receive a complaint and jump to judgment. It makes
+            many smaller decisions: whether the filing is complete, whether support is verified,
+            whether evidence should be normalized, whether reviewers are conflict-free, whether a
+            case should advance, and whether escrowed funds should be released. Those decisions
+            happen at stage boundaries, which is exactly where an MDP is useful.
+          </p>
+          <p>
+            In the MDP view, the institution is optimizing long-run process quality. A good
+            policy rewards credible accountability, fairness, speed, and capture resistance. It
+            penalizes false positives, delay, reputational abuse, weak records, and decisions
+            that concentrate too much discretion in one actor.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Core Tuple</p>
+          <h2>The MDP makes the operating logic explicit.</h2>
+          <div class="table-wrap">
+            <table class="model-table">
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Symbol</th>
+                  <th>Meaning for the court</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tupleRows.map((row) => (
+                  <tr>
+                    <td>{row.component}</td>
+                    <td><code>{row.symbol}</code></td>
+                    <td>{row.meaning}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Control Loop</p>
+          <h2>Each stage repeats the same institutional loop.</h2>
+          <div class="chart-card">
+            <pre class="mermaid">
+flowchart LR
+  S["Visible state: case stage, evidence score, queues"] --> P["Policy pi(s): published rule"]
+  P --> A["Action: verify, audit, assign, escalate, close"]
+  A --> T["Transition: record, queue, funding, or risk changes"]
+  T --> R["Outcome score: accountability, fairness, speed, integrity"]
+  R --> S
+            </pre>
+          </div>
+          <p>
+            This loop turns procedural design into a measurable system. The court can ask whether
+            a policy actually reduces delay, whether it catches weak filings earlier, whether it
+            lowers conflict risk, and whether it moves strong cases without sacrificing review
+            quality.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">State Design</p>
+          <h2>The state should describe the case, the institution, and the public signal.</h2>
+          <div class="card-grid two-up signal-grid">
+            {stateCards.map((item) => (
+              <section class="mini-card">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </section>
+            ))}
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Policy Shape</p>
+          <h2>A practical MDP policy looks like a stage-gate controller.</h2>
+          <div class="chart-card">
+            <pre class="mermaid">
+flowchart TD
+  Filing["New filing enters"] --> Complete["Check completeness and scope"]
+  Complete --> Evidence["Score evidence and corroboration"]
+  Evidence --> Integrity["Check identity, duplicates, conflicts, manipulation signals"]
+  Integrity --> Choice["Apply published stage-gate policy"]
+  Choice --> More["Request more evidence"]
+  Choice --> Audit["Hold for audit"]
+  Choice --> Admit["Escalate to admission review"]
+  Choice --> Close["Close or refund"]
+  Admit --> Assign["Assign fresh randomized reviewers"]
+            </pre>
+          </div>
+          <pre class="model-block"><code>{`Example MDP policy sketch:
+  if evidence_score < minimum_floor:
+    request_more_evidence
+
+  else if conflict_risk is high:
+    assign_conflict_audit
+
+  else if queue_age is high and reviewer_capacity is healthy:
+    expedite_to_next_stage
+
+  else if escrow_ready and legal_viability_score is high:
+    release_stage_funding
+
+  else:
+    keep_under_review_or_close`}</code></pre>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Control Levers</p>
+          <h2>The model controls process decisions, not factual conclusions.</h2>
+          <div class="timeline-grid stage-grid">
+            {controls.map((item) => (
+              <section class="timeline-card">
+                <p class="card-kicker">{item.eyebrow}</p>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </section>
+            ))}
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Stage Map</p>
+          <h2>Each part of the court has a different state and action surface.</h2>
+          <div class="table-wrap">
+            <table class="model-table">
+              <thead>
+                <tr>
+                  <th>Stage</th>
+                  <th>State variables</th>
+                  <th>Likely controls</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stageControls.map((row) => (
+                  <tr>
+                    <td>{row.stage}</td>
+                    <td>{row.state}</td>
+                    <td>{row.action}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Limits</p>
+          <h2>The MDP is strongest when the relevant state is observable.</h2>
+          <p>
+            This model works well for queues, assignment rules, capacity, funding gates, and
+            procedural timing because those features can be measured. It becomes too confident
+            when the decisive variables are hidden: whether collusion actually happened, whether
+            evidence is missing, whether witnesses are reliable, or whether a filing campaign is
+            coordinated. That is where the POMDP model becomes the more honest institutional
+            description.
+          </p>
+          <div class="page-actions">
+            <a class="button button-primary" href={pomdpHref}>Open the POMDP model</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

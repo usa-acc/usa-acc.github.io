@@ -1,0 +1,348 @@
+---
+import MermaidLoader from '../../components/MermaidLoader.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const homeHref = import.meta.env.BASE_URL;
+const basePath = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const frameworkHref = `${basePath}framework/`;
+const mdpHref = `${basePath}modeling/mdp/`;
+
+const tupleRows = [
+  {
+    component: 'Hidden state',
+    symbol: 'S',
+    meaning:
+      'The true but partly unseen condition: whether collusion occurred, whether evidence is reliable, whether support is organic, and whether the case is legally viable.',
+  },
+  {
+    component: 'Actions',
+    symbol: 'A',
+    meaning:
+      'The court actions that change what can be learned: request corroboration, audit identities, assign reviewers, seal, publish, escalate, pause, fund, or close.',
+  },
+  {
+    component: 'Observations',
+    symbol: 'Omega',
+    meaning:
+      'What the system can actually see: filings, documents, metadata, support patterns, conflicts, reviewer notes, contradictions, and external corroboration.',
+  },
+  {
+    component: 'Observation model',
+    symbol: 'O(o | s_next, a)',
+    meaning:
+      'How likely an observation is if the hidden condition is true. Strong-looking filings can be engineered; messy records can still point to real corruption.',
+  },
+  {
+    component: 'Belief state',
+    symbol: 'b(s)',
+    meaning:
+      'A running probability distribution over hidden conditions, updated after each new observation or review action.',
+  },
+  {
+    component: 'Policy',
+    symbol: 'pi(b)',
+    meaning:
+      'A control rule that chooses the next action from the current belief state, not from raw visible fields alone.',
+  },
+];
+
+const hiddenVsObserved = [
+  {
+    title: 'Hidden truth',
+    body:
+      'Whether the alleged coordination actually happened, whether intent can be inferred, whether records are complete, and whether public harm is causally linked.',
+  },
+  {
+    title: 'Visible observations',
+    body:
+      'Complaint structure, timestamps, documents, identity checks, signer behavior, funding activity, reviewer notes, conflicts, and public-source corroboration.',
+  },
+  {
+    title: 'Belief state',
+    body:
+      'The court maintains estimates for credibility, manipulation risk, legal viability, public-interest value, retaliation risk, and expected process cost.',
+  },
+  {
+    title: 'Control action',
+    body:
+      'The controller chooses actions that improve knowledge or protect legitimacy: audit, request more evidence, assign fresh review, escalate, seal, publish, or close.',
+  },
+];
+
+const stageBeliefs = [
+  {
+    stage: 'Submission',
+    belief:
+      'Probability the allegation is coherent, scoped correctly, and not merely a policy disagreement or retaliatory filing.',
+    control:
+      'Ask for missing parties, benefit flow, harmed class, conduct window, or initial evidence before attention compounds.',
+  },
+  {
+    stage: 'Validation',
+    belief:
+      'Probability that support is verified, corroboration is independent, evidence is authentic, and duplicate campaigns are under control.',
+    control:
+      'Run identity checks, audit metadata, merge duplicates, delay publication, or require independent corroboration.',
+  },
+  {
+    stage: 'Admission review',
+    belief:
+      'Probability the record is legally viable, evidentially mature, and clean enough for independent review.',
+    control:
+      'Assign a fresh panel, request targeted supplementation, reject, admit, or send suspicious records to audit.',
+  },
+  {
+    stage: 'Trial and remedies',
+    belief:
+      'Probability that the developed record supports a finding, that remedies are enforceable, and that process risk remains acceptable.',
+    control:
+      'Release escrow, control disclosure, manage panel assignment, narrow remedies, publish findings, or close without further escalation.',
+  },
+];
+
+const observationExamples = [
+  {
+    observation: 'Many signers arrive in a short burst',
+    couldMean:
+      'A credible public-interest signal after news coverage, or a coordinated influence campaign.',
+    response:
+      'Update belief in both public salience and manipulation risk, then trigger identity and timing audits if needed.',
+  },
+  {
+    observation: 'Documents are incomplete but internally consistent',
+    couldMean:
+      'A weak filing, a whistleblower with partial access, or a true case where key records are controlled by defendants.',
+    response:
+      'Request targeted corroboration rather than treating incompleteness as automatic failure.',
+  },
+  {
+    observation: 'A reviewer flags a conflict late',
+    couldMean:
+      'Ordinary disclosure, hidden entanglement, or an eligibility-screening failure.',
+    response:
+      'Update belief in process contamination and reassign under a published conflict rule.',
+  },
+  {
+    observation: 'The defendant supplies a plausible benign explanation',
+    couldMean:
+      'No corruption, innocent administrative error, or strategic reframing that hides coordination.',
+    response:
+      'Update legal viability and evidence sufficiency while checking whether the explanation predicts the observed facts.',
+  },
+];
+---
+
+<BaseLayout
+  title="USACC Modeling | POMDP"
+  description="How a Partially Observable Markov Decision Process can model hidden corruption, uncertain evidence, and belief-based control inside the US Anti-Corruption Court concept."
+>
+  <Fragment slot="head">
+    <MermaidLoader />
+  </Fragment>
+
+  <header class="subpage-hero">
+    <div class="container">
+      <a class="back-link" href={homeHref}>Back to home</a>
+      <p class="section-kicker">Modeling / POMDP</p>
+      <h1>The court under partial observability.</h1>
+      <p class="lede narrow">
+        A POMDP is the more realistic model for corruption work because the court rarely sees the
+        whole truth when it must decide what to do next. It sees filings, documents, support
+        patterns, conflicts, and reviewer notes. It does not directly see collusion, intent,
+        witness reliability, missing evidence, or coordinated manipulation.
+      </p>
+      <div class="page-actions">
+        <a class="button button-primary" href={mdpHref}>Start with the MDP</a>
+        <a class="button button-secondary" href={frameworkHref}>Read the framework</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container article-shell">
+        <article class="quote-card">
+          <p>
+            A POMDP makes uncertainty explicit. The court controls the next process step by
+            updating beliefs about hidden reality, not by pretending the visible record is the
+            whole world.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Why POMDP</p>
+          <h2>Corruption cases are defined by the gap between what happened and what can be seen.</h2>
+          <p>
+            Collusion is often deliberately hidden. A clean document trail may be laundered
+            through normal process. A messy complaint may still contain a true signal. Public
+            support can be organic, manufactured, retaliatory, or a mix. If USACC is going to
+            control that environment responsibly, it needs a model that separates observations
+            from hidden state.
+          </p>
+          <p>
+            The POMDP view says: keep a belief state, update it after each observation, and choose
+            the action that most improves accountability and legitimacy. That action may be
+            escalation, but it may also be audit, delay, sealing, targeted supplementation, or
+            closure.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Core Tuple</p>
+          <h2>The POMDP adds observations and beliefs to the control model.</h2>
+          <div class="table-wrap">
+            <table class="model-table">
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Symbol</th>
+                  <th>Meaning for the court</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tupleRows.map((row) => (
+                  <tr>
+                    <td>{row.component}</td>
+                    <td><code>{row.symbol}</code></td>
+                    <td>{row.meaning}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Belief Loop</p>
+          <h2>The controller acts on belief, then learns from what the action reveals.</h2>
+          <div class="chart-card">
+            <pre class="mermaid">
+flowchart LR
+  H["Hidden state: collusion, intent, reliability, manipulation"] -.-> O["Observations: filings, evidence, support, reviewer notes"]
+  O --> B["Belief state b(s): credibility, risk, viability"]
+  B --> P["Policy pi(b)"]
+  P --> A["Action: audit, request, assign, escalate, seal, close"]
+  A --> N["New observation"]
+  N --> B
+  A --> H
+            </pre>
+          </div>
+          <p>
+            The dashed edge matters. Hidden reality affects what the court sees, but the court
+            cannot inspect hidden reality directly. The institution must choose actions that
+            reveal more, reduce downside risk, or move a sufficiently mature case forward.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Belief Update</p>
+          <h2>Each observation changes what the court should believe.</h2>
+          <pre class="model-block"><code>{`Belief update sketch:
+  b_next(theta) proportional to
+    O(observation | theta, action)
+    * Sum over previous_theta [
+        T(theta | previous_theta, action)
+        * b(previous_theta)
+      ]
+
+Translation:
+  After an audit, filing supplement, conflict check, or reviewer note,
+  update the estimated probability that the matter is credible,
+  manipulated, legally viable, mature, or unsafe to publish.`}</code></pre>
+          <div class="card-grid two-up signal-grid">
+            {hiddenVsObserved.map((item) => (
+              <section class="mini-card">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </section>
+            ))}
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Decision Logic</p>
+          <h2>Control is the choice of what to learn or do next.</h2>
+          <div class="chart-card">
+            <pre class="mermaid">
+flowchart TD
+  B["Current belief state"] --> M["Manipulation risk high"]
+  B --> E["Evidence sufficiency low"]
+  B --> L["Legal viability high"]
+  B --> C["Conflict risk high"]
+  M --> Audit["Hold for audit"]
+  E --> Request["Request targeted evidence"]
+  L --> Escalate["Escalate with fresh reviewers"]
+  C --> Reassign["Reassign or recuse"]
+  Audit --> Update["Observe outcome and update belief"]
+  Request --> Update
+  Escalate --> Update
+  Reassign --> Update
+            </pre>
+          </div>
+          <p>
+            Two cases can look similar on the surface and still require different actions because
+            the belief state differs. A high-profile filing with suspicious signer timing may
+            need audit before publicity. A quieter filing with independent corroboration may be
+            ready for review even if public support is modest.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Observation Model</p>
+          <h2>The same signal can point to different hidden realities.</h2>
+          <div class="table-wrap">
+            <table class="model-table">
+              <thead>
+                <tr>
+                  <th>Observation</th>
+                  <th>Could mean</th>
+                  <th>POMDP response</th>
+                </tr>
+              </thead>
+              <tbody>
+                {observationExamples.map((row) => (
+                  <tr>
+                    <td>{row.observation}</td>
+                    <td>{row.couldMean}</td>
+                    <td>{row.response}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Stage Beliefs</p>
+          <h2>Each stage has different hidden variables and different control actions.</h2>
+          <div class="timeline-grid stage-grid">
+            {stageBeliefs.map((item) => (
+              <section class="timeline-card">
+                <p class="card-kicker">{item.stage}</p>
+                <h3>{item.stage}</h3>
+                <p><strong>Belief focus:</strong> {item.belief}</p>
+                <p><strong>Control response:</strong> {item.control}</p>
+              </section>
+            ))}
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Guardrail</p>
+          <h2>The POMDP should protect legitimacy, not automate verdicts.</h2>
+          <p>
+            The strongest use is operational: better evidence requests, smarter audits, fairer
+            reviewer assignment, cleaner funding gates, better publication choices, and earlier
+            detection of manipulation. The model should recommend process actions like "audit,"
+            "request corroboration," or "not mature enough." It should not announce factual guilt.
+          </p>
+          <div class="page-actions">
+            <a class="button button-primary" href={mdpHref}>Back to the MDP model</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

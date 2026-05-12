@@ -1,0 +1,17 @@
+{
+  "name": "usacc-site-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.12.4",
+  "scripts": {
+    "install:browsers": "playwright install chromium",
+    "test": "playwright test --workers=1",
+    "test:headed": "playwright test --workers=1 --headed",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "typescript": "^5.9.3"
+  }
+}

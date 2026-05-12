@@ -15,6 +15,7 @@ const navItems = [
   { href: '#design', label: 'Design' },
   { href: '#details', label: 'Details' },
   { href: '#platform', label: 'Platform' },
+  { href: '#modeling', label: 'Modeling' },
   { href: '#support', label: 'Support' },
 ];
 
@@ -42,11 +43,29 @@ const whoWeAre = [
   },
 ];
 
+const modelingPages = [
+  {
+    title: 'MDP operating model',
+    href: 'modeling/mdp/',
+    body:
+      'Treat the court as a visible staged control system for routing, queues, reviewer assignment, escalation, escrow, and capacity decisions.',
+    cta: 'Open MDP model',
+  },
+  {
+    title: 'POMDP uncertainty model',
+    href: 'modeling/pomdp/',
+    body:
+      'Model the hidden reality behind corruption cases: collusion, intent, missing evidence, manipulation risk, and belief-based control.',
+    cta: 'Open POMDP model',
+  },
+];
+
 const basePath = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
 const homeHref = import.meta.env.BASE_URL;
 const frameworkHref = `${basePath}framework/`;
+const modelingHref = `${basePath}modeling/mdp/`;
 ---
 
 <BaseLayout
@@ -88,6 +107,7 @@ const frameworkHref = `${basePath}framework/`;
           <div class="hero-actions">
             <a class="button button-primary" href="#support">Join the interest list</a>
             <a class="button button-secondary" href={frameworkHref}>Read the framework</a>
+            <a class="button button-secondary" href={modelingHref}>Explore modeling</a>
           </div>
 
           <div class="stat-row">
@@ -278,6 +298,34 @@ const frameworkHref = `${basePath}framework/`;
       </div>
     </section>
 
+    <section class="section" id="modeling">
+      <div class="container">
+        <div class="section-heading split">
+          <div>
+            <p class="section-kicker">Modeling</p>
+            <h2>Make the court’s control logic visible before anyone has to trust it.</h2>
+          </div>
+          <p class="section-intro">
+            MDP and POMDP models translate the court concept into explicit state, action,
+            observation, and reward structures. They help explain what the system can control,
+            what remains uncertain, and why the model should guide process quality rather than
+            automate verdicts.
+          </p>
+        </div>
+
+        <div class="card-grid two-up">
+          {modelingPages.map((page) => (
+            <article class="info-card modeling-card">
+              <p class="card-kicker">Modeling page</p>
+              <h3>{page.title}</h3>
+              <p>{page.body}</p>
+              <a class="button button-secondary" href={`${basePath}${page.href}`}>{page.cta}</a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
     <section class="section support-section" id="support">
       <div class="container support-grid">
         <div class="support-copy">
@@ -322,6 +370,10 @@ const frameworkHref = `${basePath}framework/`;
         </div>
         <div>
           <a href={frameworkHref}>Framework</a>
+          <span class="footer-separator">/</span>
+          <a href={`${basePath}modeling/mdp/`}>MDP</a>
+          <span class="footer-separator">/</span>
+          <a href={`${basePath}modeling/pomdp/`}>POMDP</a>
           <span class="footer-separator">/</span>
           <a href="#support">Join updates</a>
         </div>
