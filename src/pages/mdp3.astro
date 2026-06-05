@@ -1,0 +1,690 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const homeHref = import.meta.env.BASE_URL;
+const basePath = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const frameworkHref = `${basePath}framework/`;
+const mdpHref = `${basePath}mdp/`;
+const mdp2Href = `${basePath}mdp2/`;
+
+const pipelineSteps = [
+  'Candidate sourced via recruitment discovery, referral, or direct application',
+  'Resume and LinkedIn profile ingested, parsed, and embedded',
+  'Skills extraction and credential verification against role requirements',
+  'Embedding-based similarity scoring against historical high-performers',
+  'MDP controller recommends admit, hold, or reject with audit trail',
+  'Human recruiter reviews recommendation and makes final decision',
+  'Onboarding tracked; performance feeds back into the learning loop',
+];
+
+const stateCards = [
+  {
+    title: 'Candidate state',
+    body:
+      'Resume embedding, LinkedIn profile embedding, years of experience, credential vector, skills match score, referral source, prior application history, and geographic availability.',
+  },
+  {
+    title: 'Pool state',
+    body:
+      'Current coach count, active caseload per coach, attrition rate over 30/90/180 days, skill coverage gaps, geographic distribution, and pending onboarding pipeline depth.',
+  },
+  {
+    title: 'Role state',
+    body:
+      'Required skill vector for the open position, urgency level, minimum credential floor, compensation band, expected tenure, and archetype-specific coaching demands.',
+  },
+  {
+    title: 'Historical outcome state',
+    body:
+      'For embedding-similar past hires: retention at 6/12/24 months, client satisfaction scores, session completion rates, credibility trajectory, and reason-for-departure distribution.',
+  },
+  {
+    title: 'Belief layer',
+    body:
+      'Bayesian estimates over latent candidate quality: true skill level (vs. resume inflation), reliability, cultural fit probability, and long-term retention likelihood — all distributions, not point estimates.',
+  },
+];
+
+const actionGroups = [
+  {
+    title: 'Candidate screening',
+    actions: [
+      'admit_to_interview',
+      'hold_for_more_info',
+      'request_references',
+      'reject_below_floor',
+      'fast_track_high_match',
+    ],
+    body:
+      'These actions control whether a candidate advances in the pipeline, gets held for additional verification, or is filtered out. The controller recommends; the recruiter decides.',
+  },
+  {
+    title: 'Skills matching',
+    actions: [
+      'match_primary_skill_set',
+      'match_adjacent_skill_set',
+      'flag_skill_gap',
+      'recommend_upskilling_path',
+    ],
+    body:
+      'Embedding-based skill matching goes beyond keyword overlap. Two coaches with different terminology but similar demonstrated competencies will cluster together in the embedding space.',
+  },
+  {
+    title: 'Pool management',
+    actions: [
+      'pool_hold_steady',
+      'pool_recruit_n',
+      'pool_activate_reserve',
+      'pool_reduce_via_attrition',
+      'rebalance_skill_coverage',
+    ],
+    body:
+      'The capacity lever for the coaching pool. The controller can recommend recruitment drives, reserve activation, or natural attrition absorption — but only within governance-approved headcount bands.',
+  },
+  {
+    title: 'Onboarding decisions',
+    actions: [
+      'assign_onboarding_track',
+      'pair_with_mentor',
+      'schedule_credential_review',
+      'extend_probation',
+      'confirm_full_status',
+    ],
+    body:
+      'Post-hire decisions that shape the first 90 days. The MDP learns which onboarding configurations correlate with long-term retention and high client satisfaction scores.',
+  },
+];
+
+const embeddingCards = [
+  {
+    title: 'Resume embedding',
+    body:
+      'Full resume text is embedded via Gemini (768-dim). Captures career trajectory, domain vocabulary, and implicit skill signals that keyword matching misses entirely.',
+  },
+  {
+    title: 'LinkedIn profile embedding',
+    body:
+      'Public profile summary, experience descriptions, and endorsement patterns are embedded separately. Cross-referenced with the resume embedding to detect consistency and depth.',
+  },
+  {
+    title: 'Skills vector',
+    body:
+      'Extracted skills are mapped to the platform taxonomy and embedded. The cosine distance between a candidate\'s skill vector and the role\'s requirement vector is the primary match feature.',
+  },
+  {
+    title: 'Outcome-conditioned embedding',
+    body:
+      'Historical hires are embedded alongside their 12-month outcome data. New candidates are scored by proximity to the "successful hire" cluster versus the "early departure" cluster.',
+  },
+];
+
+const rewardRows = [
+  {
+    type: 'Per-hire positive',
+    detail:
+      'Retention past 6-month cliff, client satisfaction above threshold, session completion rate, credibility score trajectory, and successful case contributions.',
+  },
+  {
+    type: 'Per-hire negative',
+    detail:
+      'Early departure (under 6 months), client complaints, missed sessions, credential discrepancies discovered post-hire, and onboarding failure.',
+  },
+  {
+    type: 'System-level positive',
+    detail:
+      'Improved skill coverage across the coaching pool, reduced time-to-fill for critical roles, lower attrition rate, and higher aggregate client satisfaction.',
+  },
+  {
+    type: 'System-level negative',
+    detail:
+      'Skill coverage gaps persisting beyond SLA, over-hiring in saturated skill areas, demographic clustering in the pool, and rising cost-per-quality-hire.',
+  },
+];
+
+const learningLayers = [
+  {
+    title: 'Layer 1: Hard constraints',
+    body:
+      'Credential floors, background check requirements, geographic eligibility, compensation bands, and maximum pool size stay outside the learning loop. Governance sets these.',
+  },
+  {
+    title: 'Layer 2: Embedding similarity',
+    body:
+      'Resume and LinkedIn embeddings provide the generalization substrate. A new candidate inherits the prior of their nearest successful-hire neighbors before any direct evidence accumulates.',
+  },
+  {
+    title: 'Layer 3: Contextual bandit',
+    body:
+      'Per-candidate screening decisions are modeled as a contextual bandit with delayed reward. The policy learns which candidate features predict 12-month retention, not just interview success.',
+  },
+  {
+    title: 'Layer 4: Constrained RL',
+    body:
+      'Pool-level decisions (how many to recruit, which skills to prioritize) use constrained RL to honor fairness bounds, budget limits, and diversity requirements while optimizing pool quality.',
+  },
+  {
+    title: 'Layer 5: Causal inference',
+    body:
+      'Difference-in-differences and synthetic controls estimate which onboarding configurations actually cause better outcomes, separating selection effects from treatment effects.',
+  },
+  {
+    title: 'Layer 6: Human oversight',
+    body:
+      'Every recommendation surfaces to a human recruiter with full audit trail. The controller never hires or fires autonomously. Governance approves policy versions before deployment.',
+  },
+];
+
+const feedbackLoop = [
+  {
+    eyebrow: 'Month 0',
+    title: 'Candidate ingestion',
+    body:
+      'Resume and LinkedIn data are parsed, embedded, and scored against role requirements. The MDP recommends a screening action based on embedding similarity to historical outcomes.',
+  },
+  {
+    eyebrow: 'Month 1–3',
+    title: 'Onboarding observation',
+    body:
+      'Early signals — training completion, mentor feedback, first client interactions — update the belief state. The MDP adjusts its confidence in the hire quality estimate.',
+  },
+  {
+    eyebrow: 'Month 3–6',
+    title: 'Probation evaluation',
+    body:
+      'Session completion rates, client satisfaction, and credential utilization are measured. The reward signal begins to mature. Probation extension or confirmation is recommended.',
+  },
+  {
+    eyebrow: 'Month 6–12',
+    title: 'Retention cliff',
+    body:
+      'The 6-month retention cliff is the primary outcome signal. Coaches who pass it with strong metrics generate a large positive reward attributed back to the screening decision.',
+  },
+  {
+    eyebrow: 'Month 12+',
+    title: 'Long-horizon feedback',
+    body:
+      'Credibility score trajectory, client retention, and professional development milestones feed into the long-term reward. This delayed signal trains the next generation of the screening policy.',
+  },
+];
+
+const safetyRails = [
+  {
+    title: 'What the system does',
+    body:
+      'Scores candidates against historical outcomes, recommends screening actions, identifies skill gaps in the pool, and surfaces audit-ready explanations for every recommendation.',
+  },
+  {
+    title: 'What the system does not do',
+    body:
+      'It does not autonomously hire or fire. It does not use protected characteristics as features. It does not override recruiter judgment. It does not learn reward weights — governance sets them.',
+  },
+  {
+    title: 'Where humans remain sovereign',
+    body:
+      'Recruiters make every hiring decision. Coaches are evaluated by human managers. Firing decisions require human review with documented cause. The MDP recommends; humans decide.',
+  },
+  {
+    title: 'Why this matters',
+    body:
+      'A recruitment system that learns toward efficiency without fairness constraints will rediscover and amplify existing biases. The constrained RL formulation and fairness audits exist to prevent that.',
+  },
+];
+
+const schemaPreview = [
+  {
+    table: 'coach_candidates',
+    purpose: 'Stores parsed candidate profiles with embedding references, skill extractions, and screening status.',
+  },
+  {
+    table: 'coach_candidate_embeddings',
+    purpose: 'Dedicated embedding store for resume and LinkedIn vectors, separate from entity embeddings to handle recruitment-volume churn.',
+  },
+  {
+    table: 'coach_hiring_decisions',
+    purpose: 'Logs every MDP screening recommendation with full state snapshot, Q-values, and policy version for training and audit.',
+  },
+  {
+    table: 'coach_hiring_outcomes',
+    purpose: 'Tracks post-hire outcomes — retention, satisfaction, credibility — sealed at 6 and 12 month horizons for reward computation.',
+  },
+  {
+    table: 'coach_skill_requirements',
+    purpose: 'Defines the skill vectors and credential floors for each coaching role, versioned and governance-approved.',
+  },
+  {
+    table: 'coach_pool_snapshots',
+    purpose: 'Periodic snapshots of pool composition, skill coverage, and capacity metrics used as system-level state for pool-sizing decisions.',
+  },
+];
+---
+
+<BaseLayout
+  title="USACC | MDP3 Coach Recruitment Intelligence"
+  description="How embedding-driven MDP learning systems support coach hiring, skills matching, and retention prediction while keeping humans sovereign over every decision."
+>
+  <header class="subpage-hero">
+    <div class="container">
+      <a class="back-link" href={homeHref}>Back to home</a>
+      <p class="section-kicker">Recruitment Intelligence</p>
+      <h1>How the MDP learns which coaches succeed — and which ones don't.</h1>
+      <p class="lede narrow">
+        The court needs a large, high-quality coaching pool. Finding the right coaches is a
+        sequential decision problem with delayed rewards: a hire looks good on paper today, but the
+        real signal — retention, client satisfaction, credibility growth — takes 6 to 12 months to
+        materialize. This page explains how embedding-based learning, constrained RL, and causal
+        inference help the recruitment pipeline get better over time without ever making an
+        autonomous hiring decision.
+      </p>
+
+      <div class="page-actions">
+        <a class="button button-primary" href={frameworkHref}>Read the framework</a>
+        <a class="button button-secondary" href={mdp2Href}>Read the court-flow MDP</a>
+        <a class="button button-secondary" href={mdpHref}>Read the first MDP brief</a>
+      </div>
+
+      <div class="note-strip">
+        <span>Candidates as signals</span>
+        <span>Embeddings drive cold start</span>
+        <span>Retention is the real reward</span>
+        <span>Humans decide, always</span>
+        <span>Fairness constraints are hard rails</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container article-shell">
+        <article class="quote-card">
+          <p>
+            The recruitment MDP does not decide who gets hired. It learns which candidate signals
+            predict long-term coaching success, and it surfaces that learning to human recruiters as
+            scored recommendations with full audit trails.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Why This Surface</p>
+          <h2>Coach quality is the upstream bottleneck for every downstream outcome.</h2>
+          <p>
+            The court's legitimacy depends on the quality of its coaching pool. A weak hire does not
+            just cost a salary — it costs client trust, case quality, and institutional credibility.
+            But traditional recruitment is a noisy signal problem: resumes are curated, interviews
+            are performative, and the real outcome (does this coach retain and deliver?) takes months
+            to observe.
+          </p>
+          <p>
+            The MDP formulation turns this into a learnable problem. By embedding candidate profiles
+            and correlating them with historical outcomes, the system builds a prior that gets better
+            with every hire. A new candidate's resume does not start from zero — it starts from the
+            average outcome of the most similar past candidates.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Pipeline</p>
+          <h2>From resume to retention: the recruitment lifecycle as a decision chain.</h2>
+          <ol class="article-list article-list-numbered">
+            {pipelineSteps.map((step) => (
+              <li>{step}</li>
+            ))}
+          </ol>
+          <p>
+            The critical architectural point is that the MDP acts at step 5 — it recommends, it does
+            not execute. The human recruiter at step 6 sees the recommendation, the confidence score,
+            the nearest-neighbor explanations, and the full candidate profile. They can accept,
+            override, or request more information. Every override is logged and becomes training data
+            for the next policy version.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">State</p>
+          <h2>The controller sees candidate features, pool composition, and historical outcomes.</h2>
+          <div class="card-grid two-up">
+            {stateCards.map((item) => (
+              <section class="mini-card">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </section>
+            ))}
+          </div>
+          <p>
+            The belief layer is what separates this from a static scoring model. A candidate with a
+            polished resume but thin verifiable credentials gets a wide uncertainty interval. A
+            candidate with strong references and demonstrated domain experience gets a tight one. The
+            MDP acts on the distribution, not the point estimate — which means it can recommend
+            "request references" when uncertain rather than making a premature yes/no call.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Embeddings</p>
+          <h2>LLM embeddings are how the system generalizes across candidates it has never seen.</h2>
+          <div class="card-grid two-up">
+            {embeddingCards.map((item) => (
+              <section class="mini-card">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </section>
+            ))}
+          </div>
+          <p>
+            The outcome-conditioned embedding is the load-bearing innovation. Standard resume
+            screening asks "does this candidate have the right keywords?" Embedding-based screening
+            asks "does this candidate's full profile pattern match the pattern of candidates who
+            actually succeeded in this role?" That is a fundamentally different and more useful
+            question.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Controls</p>
+          <h2>The action space covers screening, matching, pool management, and onboarding.</h2>
+          <div class="card-grid">
+            {actionGroups.map((group) => (
+              <section class="info-card">
+                <h3>{group.title}</h3>
+                <p>{group.body}</p>
+                <ul class="article-list">
+                  {group.actions.map((action) => (
+                    <li><code>{action}</code></li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Reward</p>
+          <h2>The reward is delayed, multi-dimensional, and governance-weighted.</h2>
+          <div class="table-wrap">
+            <table class="model-table">
+              <thead>
+                <tr>
+                  <th>Reward surface</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rewardRows.map((row) => (
+                  <tr>
+                    <td>{row.type}</td>
+                    <td>{row.detail}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The hardest part of this reward design is the time delay. A screening decision made today
+            does not produce a reliable outcome signal for 6 to 12 months. The trainer uses truncated
+            returns with optimistic imputation — a hire with no negative signal after 6 months is
+            partially sealed as "on track" — but the full reward is not computed until the 12-month
+            horizon closes. This prevents the policy from chasing early-signal proxies that do not
+            predict long-term success.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Learning Stack</p>
+          <h2>Six layers, from hard constraints to human oversight, with learning in the middle.</h2>
+          <div class="card-grid thirds">
+            {learningLayers.map((item) => (
+              <section class="info-card">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </section>
+            ))}
+          </div>
+          <p>
+            This stack mirrors the court-flow learning stack from the second MDP brief but with
+            recruitment-specific adaptations. The constrained RL layer is especially important here
+            because hiring decisions are where bias risk is highest. The fairness constraints are not
+            soft penalties in the reward — they are hard gates in the policy evaluation pipeline. A
+            new policy version that improves aggregate hire quality but worsens demographic parity
+            fails the audit and does not promote.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Feedback Loop</p>
+          <h2>The real learning happens over months, not minutes.</h2>
+          <div class="timeline-grid stage-grid">
+            {feedbackLoop.map((stage) => (
+              <section class="timeline-card">
+                <p class="card-kicker">{stage.eyebrow}</p>
+                <h3>{stage.title}</h3>
+                <p>{stage.body}</p>
+              </section>
+            ))}
+          </div>
+          <p>
+            The 6-month retention cliff is the court's equivalent of the "reply vs. open" distinction
+            in email outreach. An interview that goes well is like an email that gets opened — it is
+            a positive signal but not the outcome you are optimizing for. The outcome is a coach who
+            is still delivering high-quality work a year later. Everything upstream is just a proxy.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Data Architecture</p>
+          <h2>Dedicated tables keep recruitment data separate from the court-flow pipeline.</h2>
+          <div class="table-wrap">
+            <table class="model-table">
+              <thead>
+                <tr>
+                  <th>Table</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                {schemaPreview.map((row) => (
+                  <tr>
+                    <td><code>{row.table}</code></td>
+                    <td>{row.purpose}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The embedding store is deliberately separate from the main entity embedding table for the
+            same reason the scraping page embeddings are separate: recruitment-volume churn would
+            overwhelm a shared store, and retention policies differ. Candidate embeddings may be
+            regenerated on every resume update; entity embeddings are stable across sessions.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Cold Start</p>
+          <h2>The system is useful from day one because embeddings provide a prior before any hiring data exists.</h2>
+          <p>
+            Three cold-start mechanisms, same shape as every other MDP surface in the platform:
+          </p>
+          <div class="expand-stack">
+            <details class="expand-card">
+              <summary>Population prior</summary>
+              <p>
+                Hand-tuned weights in code provide a baseline screening policy before any outcomes
+                are observed. These encode domain knowledge: "candidates with verified credentials
+                and relevant experience are more likely to succeed." Crude but directionally correct.
+              </p>
+            </details>
+            <details class="expand-card">
+              <summary>Embedding-neighbor prior</summary>
+              <p>
+                A new candidate's screening recommendation borrows from the average outcome of the
+                top-K nearest candidates in embedding space. If the 8 most similar past candidates
+                had 75% retention at 12 months, the new candidate starts with that as their prior.
+                As direct evidence accumulates, the prior fades.
+              </p>
+            </details>
+            <details class="expand-card">
+              <summary>Higher exploration for new roles</summary>
+              <p>
+                For coaching roles with fewer than 20 historical hires, exploration (ε) is doubled.
+                The system deliberately tries a wider range of candidate profiles to build the
+                evidence base faster. This is cheapest when the role is new and there is no
+                established "type" to deviate from.
+              </p>
+            </details>
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Guardrails</p>
+          <h2>The boundary between recommendation and decision is the load-bearing structural guarantee.</h2>
+          <div class="card-grid two-up">
+            {safetyRails.map((item) => (
+              <section class="mini-card">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </section>
+            ))}
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Relationship to Other Surfaces</p>
+          <h2>Coach recruitment is the fifth MDP surface, sharing infrastructure with the first four.</h2>
+          <p>
+            The platform already operates four MDP decisioning surfaces: notifications, feed
+            recommendations, scraping escalation, and outbound email. Coach recruitment shares
+            the same infrastructure:
+          </p>
+          <div class="expand-stack">
+            <details class="expand-card">
+              <summary>Shared decision log</summary>
+              <p>
+                All surfaces write to the unified <code>mdp_decisions</code> table with a
+                <code>surface = 'coach_recruitment'</code> discriminator. This keeps the training
+                pipeline, audit trail, and policy versioning consistent across surfaces.
+              </p>
+            </details>
+            <details class="expand-card">
+              <summary>Shared embedding infrastructure</summary>
+              <p>
+                Candidate embeddings use the same multi-provider helper that generates user, page,
+                template, and ICP embeddings. The persist target is the dedicated
+                <code>coach_candidate_embeddings</code> table, but the generation pipeline is shared.
+              </p>
+            </details>
+            <details class="expand-card">
+              <summary>Shared policy lifecycle</summary>
+              <p>
+                Policy weights are stored in <code>mdp_policy_weights</code> with
+                <code>surface = 'coach_recruitment'</code>. The OPE → canary → promote loop is
+                identical: no new policy touches live recommendations until IPS evaluation confirms
+                it outperforms the incumbent and a canary cohort validates it in production.
+              </p>
+            </details>
+            <details class="expand-card">
+              <summary>Shared safety philosophy</summary>
+              <p>
+                Hard constraints live outside the model. Fairness audits gate promotion. Exploration
+                is bounded. Humans decide. The model recommends. This is the same principle across
+                all five surfaces — applied here to the most consequential decisions the platform
+                makes about people.
+              </p>
+            </details>
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Bottom Line</p>
+          <h2>The court's coaching pool gets better over time because every hire teaches the next one.</h2>
+          <p>
+            The recruitment MDP is the platform's answer to a question every organization faces: how
+            do you learn from your hiring history without codifying its biases? The answer is
+            embeddings for generalization, constrained RL for fairness, delayed rewards for honest
+            evaluation, and human sovereignty for legitimacy.
+          </p>
+          <p>
+            The result is not an automated hiring machine. It is a learning recommendation system
+            that gets smarter with every coach it observes — the ones who thrive and the ones who
+            leave — while keeping the actual decision where it belongs: with the humans who are
+            accountable for it.
+          </p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .page-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-top: 1.6rem;
+    }
+
+    .note-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 1.4rem;
+    }
+
+    .note-strip span {
+      padding: 0.72rem 0.95rem;
+      border-radius: 999px;
+      border: 1px solid rgba(15, 76, 129, 0.14);
+      background: rgba(15, 76, 129, 0.08);
+      color: var(--secondary);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .table-wrap {
+      margin-top: 1rem;
+      overflow-x: auto;
+    }
+
+    .model-table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+
+    .model-table th,
+    .model-table td {
+      padding: 0.95rem 1rem;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      color: var(--text-soft);
+      font-size: 0.98rem;
+    }
+
+    .model-table th {
+      color: var(--text);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .model-table code,
+    .info-card code {
+      color: var(--secondary);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .stage-grid {
+      margin-top: 1.1rem;
+    }
+
+    @media (max-width: 720px) {
+      .page-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,436 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const homeHref = import.meta.env.BASE_URL;
+const basePath = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const frameworkHref = `${basePath}framework/`;
+const consensusHref = `${basePath}consensus/`;
+const blogsHref = `${basePath}blogs/`;
+
+const initiatives = [
+  {
+    period: '2014-present',
+    name: 'International Anti-Corruption Court proposal',
+    tested:
+      'A court-of-last-resort theory for grand corruption and kleptocracy when domestic systems are unwilling or unable to prosecute powerful actors.',
+    lesson:
+      'USACC can borrow the insistence on independence and last-resort logic, but narrow the first U.S. prototype around civil, nonprofit, public-interest, referral, and evidence-packaging functions.',
+    sourceTitle: 'Integrity Initiatives International',
+    sourceHref: 'https://integrityinitiatives.org/about-the-iacc',
+  },
+  {
+    period: '2007-2019',
+    name: 'CICIG in Guatemala',
+    tested:
+      'A UN-backed hybrid anti-impunity commission that supported domestic prosecutors, complex investigations, legal reform, and high-impact corruption cases.',
+    lesson:
+      'A protected outside capacity layer can make complex corruption visible, but political backlash becomes intense once the system starts to work.',
+    sourceTitle: 'CICIG final report',
+    sourceHref: 'https://www.cicig.org/cicig/informes_cicig/informe-de-labores/informe-final-de-labores/',
+  },
+  {
+    period: '2016-2020',
+    name: 'MACCIH in Honduras',
+    tested:
+      'An OAS anti-corruption and anti-impunity mission with autonomy, technical support, and cooperation with national prosecutors.',
+    lesson:
+      'Independent capacity can be built through partnership, but renewal politics can shut down the very mechanism that threatens entrenched networks.',
+    sourceTitle: 'OAS MACCIH',
+    sourceHref: 'https://www.oas.org/ext/en/democracy/maccih',
+  },
+  {
+    period: '2019-present',
+    name: 'Ukraine High Anti-Corruption Court plus NABU and SAPO',
+    tested:
+      'A specialized chain for high-level corruption: independent investigation, specialized prosecution, and a dedicated anti-corruption court.',
+    lesson:
+      'USACC should think in systems, not a single courtroom: intake, investigation support, prosecutors, reviewers, trial panels, appeals, and audit all need separate safeguards.',
+    sourceTitle: 'OECD Eastern Europe report',
+    sourceHref: 'https://www.oecd.org/en/publications/combatting-high-level-corruption-in-eastern-europe_3c82f87d-en/full-report/component-7.html',
+  },
+  {
+    period: '2016-present',
+    name: 'Albania SPAK and anti-corruption courts',
+    tested:
+      'A specialized anti-corruption and organized-crime structure with prosecutors, investigators, and dedicated courts.',
+    lesson:
+      'Specialization can concentrate competence, but USACC still needs anti-capture checks because specialized institutions can become targets themselves.',
+    sourceTitle: 'OECD Eastern Europe report',
+    sourceHref: 'https://www.oecd.org/en/publications/combatting-high-level-corruption-in-eastern-europe_3c82f87d-en/full-report/component-7.html',
+  },
+  {
+    period: '2021-present',
+    name: 'European Public Prosecutor\'s Office',
+    tested:
+      'An independent EU prosecution office that investigates and prosecutes fraud, corruption, money laundering, and cross-border VAT fraud affecting the EU budget.',
+    lesson:
+      'Cross-jurisdiction corruption needs a body that can move across institutional boundaries. USACC can apply that lesson domestically to diffuse victims, fragmented data, and scattered claims.',
+    sourceTitle: 'European Commission EPPO',
+    sourceHref:
+      'https://commission.europa.eu/law/cross-border-cases/judicial-cooperation/networks-and-bodies-supporting-judicial-cooperation/european-public-prosecutors-office-eppo_en',
+  },
+  {
+    period: '2014-present',
+    name: 'Open Contracting Data Standard',
+    tested:
+      'A data standard for publishing procurement records across planning, tender, award, contract, and implementation stages.',
+    lesson:
+      'USACC should not wait for filings alone. Procurement, grants, benefits, lobbying, budget, and ownership data can surface patterns before a legal theory is mature.',
+    sourceTitle: 'Web Foundation launch notice',
+    sourceHref: 'https://webfoundation.org/2014/11/worlds-first-open-contracting-data-standard-launched/',
+  },
+  {
+    period: '2016-2025',
+    name: 'HMCTS court reform programme',
+    tested:
+      'Digital court services, remote access, digital case handling, and new online workflows across courts and tribunals.',
+    lesson:
+      'Digitizing a court improves access and continuity, but USACC needs more than e-filing: it needs signal formation, evidence normalization, reviewer rotation, and public-interest triage.',
+    sourceTitle: 'GOV.UK HMCTS reform',
+    sourceHref: 'https://www.gov.uk/guidance/the-hmcts-reform-programme',
+  },
+  {
+    period: '2016-present',
+    name: 'British Columbia Civil Resolution Tribunal',
+    tested:
+      'Online dispute resolution for lower-value and specialized civil matters, beginning with strata-property disputes.',
+    lesson:
+      'ODR proves that legal process can be staged online, but USACC would apply online workflow to complex public-interest corruption signals rather than routine private disputes.',
+    sourceTitle: 'BC Law Institute notice',
+    sourceHref: 'https://www.bcli.org/civil-resolution-tribunal-to-begin-early-intake-of-strata-claims-in-mid-july',
+  },
+  {
+    period: '2018-present',
+    name: 'Kleros and decentralized justice',
+    tested:
+      'Blockchain-based dispute resolution using crowdsourcing, staking, juror selection, evidence periods, and appeal rounds.',
+    lesson:
+      'USACC can borrow proof-of-process, randomization, appeal escalation, and incentive design while rejecting token-weighted guilt or mob adjudication.',
+    sourceTitle: 'Kleros about page',
+    sourceHref: 'https://kleros.io/about/',
+  },
+  {
+    period: '2016-present',
+    name: 'Global Anti-Corruption Consortium',
+    tested:
+      'A collaboration between investigative journalists and civil-society anti-corruption advocates to move from exposed facts to public accountability.',
+    lesson:
+      'USACC should build a pathway from investigation and public evidence to structured review, not merely publish allegations and hope institutions respond.',
+    sourceTitle: 'GACC',
+    sourceHref: 'https://gacc.occrp.org/',
+  },
+];
+
+const technologyApplications = [
+  {
+    title: 'Evidence intake and normalization',
+    body:
+      'Structured filing forms, document upload, metadata extraction, duplicate detection, chain-of-custody logs, redaction workflows, and evidence maps that connect actors, benefits, duties, and harms.',
+  },
+  {
+    title: 'Open-data corruption patterning',
+    body:
+      'Procurement, campaign finance, lobbying, grants, sanctions, beneficial ownership, court records, and spending data can be joined into graphs that reveal repeated counterparties or suspicious timing.',
+  },
+  {
+    title: 'AI-assisted triage',
+    body:
+      'AI can summarize filings, flag missing elements, cluster related complaints, detect contradictions, and route cases. It should recommend process actions, not decide guilt.',
+  },
+  {
+    title: 'Verified public signal',
+    body:
+      'Identity-aware support thresholds can show public salience for diffuse harms while anti-bot, anti-duplicate, and privacy controls prevent signature drives from becoming trials by popularity.',
+  },
+  {
+    title: 'Reviewer sortition',
+    body:
+      'Randomized reviewer assignment, expertise pools, conflict checks, sealed voting, reasoned ballots, and appeal rounds can make review harder to capture than ordinary committee appointment.',
+  },
+  {
+    title: 'Escrow and funding transparency',
+    body:
+      'Per-case escrow, published budgets, refund rules, and auditable release gates can finance serious matters without letting the operator quietly redirect public-interest funds.',
+  },
+  {
+    title: 'Proof-of-process ledger',
+    body:
+      'Hashes, timestamps, public policy versions, reviewer-draw proofs, vote commitments, and escrow events can prove the process was followed without exposing sealed evidence.',
+  },
+  {
+    title: 'Referral-ready case packages',
+    body:
+      'USACC can produce structured records for prosecutors, inspectors general, journalists, civil litigators, agencies, and legislative investigators instead of leaving them with loose allegations.',
+  },
+];
+
+const courtLimits = [
+  {
+    institution: 'Supreme Court',
+    limit:
+      'Mostly appellate; original jurisdiction is constitutionally limited, and it is not a trial-level corruption intake body.',
+    usacc:
+      'USACC can begin upstream: organize filings, test public-interest signals, normalize evidence, fund review, and create referral-ready records before any appellate question exists.',
+  },
+  {
+    institution: 'Federal appellate courts',
+    limit:
+      'They review lower-court or agency decisions for legal error and fairness; they do not build factual records from civic reports.',
+    usacc:
+      'USACC can focus on the missing pre-litigation layer: evidence development, reviewer rotation, public-interest triage, and transparent escalation.',
+  },
+  {
+    institution: 'Federal and state trial courts',
+    limit:
+      'They need jurisdiction, claims, parties, pleadings, admissible evidence, and remedies. They are not designed to convert diffuse public harm into a funded docket.',
+    usacc:
+      'USACC can help define defendant-conduct-time-window scope, identify harmed classes, clarify benefit flows, and decide whether a matter is mature enough for an existing legal path.',
+  },
+  {
+    institution: 'Criminal courts',
+    limit:
+      'They depend on prosecutors and criminal statutes. Diffuse public injury, lawful-but-corrosive conduct, and underenforced conflicts often never arrive as criminal cases.',
+    usacc:
+      'USACC can create noncriminal public findings, civil referral packages, governance recommendations, and pressure-tested theories without pretending to be a criminal prosecutor.',
+  },
+  {
+    institution: 'Civil courts',
+    limit:
+      'Standing, damages, cost, class certification, arbitration clauses, immunity, and causation problems can block claims where the harm is widely spread.',
+    usacc:
+      'USACC can aggregate civic signal, fund structured review, and package cases where no single victim has enough individual incentive to fight alone.',
+  },
+  {
+    institution: 'Agencies and inspectors general',
+    limit:
+      'They may have expertise but are often bounded by agency jurisdiction, political appointment, budget, and internal chain-of-command constraints.',
+    usacc:
+      'USACC can operate as outside civic infrastructure that routes well-formed matters to the right agency while preserving a public audit trail.',
+  },
+];
+
+const workstreams = [
+  {
+    title: 'Define the first docket',
+    body:
+      'Start with a narrow docket where USACC can be concrete: procurement steering, pension or benefits self-dealing, public contracting conflicts, regulatory capture, or grant-funding abuse.',
+  },
+  {
+    title: 'Build the proof-of-process prototype',
+    body:
+      'Prototype policy versioning, evidence hashes, reviewer draw logs, sealed vote commitments, written reasons, and escrow gates before debating full legal authority.',
+  },
+  {
+    title: 'Draft the legal wrapper',
+    body:
+      'Clarify whether early USACC outputs are research reports, arbitral findings, nonprofit case packages, expert panels, referrals, or a proposed statutory court-adjacent body.',
+  },
+  {
+    title: 'Create reviewer-pool governance',
+    body:
+      'Design eligibility, conflicts, recusal, rotation, compensation, removal, appeal, and audit rules for reviewers before any politically sensitive case appears.',
+  },
+  {
+    title: 'Model the funding mechanics',
+    body:
+      'Stress-test filing fees, bonds, escrow, refunds, defense-cost reserves, grants, donor firewalls, and anti-bounty rules so the system does not reward reckless allegations.',
+  },
+  {
+    title: 'Run shadow cases',
+    body:
+      'Use historical public cases and synthetic fact patterns to test whether the intake model catches strong matters, rejects weak ones, and resists coordinated manipulation.',
+  },
+];
+
+const hardQuestions = [
+  'What remedy can a nonprofit or court-adjacent body responsibly provide before statutory authority exists?',
+  'How should USACC protect respondents from reputational harm before a claim is mature?',
+  'What evidence can be public, what must be sealed, and what should only be hashed for audit?',
+  'How can reviewer incentives reward diligence without punishing principled minority views?',
+  'How should the model distinguish corruption from ordinary policy disagreement, error, or incompetence?',
+  'What governance structure keeps donors, political actors, and platform operators from steering the docket?',
+];
+
+const sourceLinks = [
+  { title: 'Supreme Court procedures - U.S. Courts', href: 'https://www.uscourts.gov/about-federal-courts/educational-resources/about-educational-outreach/activity-resources/supreme-court-procedures' },
+  { title: 'Court role and structure - U.S. Courts', href: 'https://www.uscourts.gov/about-federal-courts/court-role-and-structure' },
+  { title: 'Standing to sue - U.S. Department of Justice', href: 'https://www.justice.gov/jm/civil-resource-manual-35-standing-sue' },
+  { title: 'International Anti-Corruption Court - Integrity Initiatives International', href: 'https://integrityinitiatives.org/about-the-iacc' },
+  { title: 'CICIG final report', href: 'https://www.cicig.org/cicig/informes_cicig/informe-de-labores/informe-final-de-labores/' },
+  { title: 'MACCIH - Organization of American States', href: 'https://www.oas.org/ext/en/democracy/maccih' },
+  { title: 'EPPO - European Commission', href: 'https://commission.europa.eu/law/cross-border-cases/judicial-cooperation/networks-and-bodies-supporting-judicial-cooperation/european-public-prosecutors-office-eppo_en' },
+  { title: 'Open Contracting Data Standard launch - Web Foundation', href: 'https://webfoundation.org/2014/11/worlds-first-open-contracting-data-standard-launched/' },
+  { title: 'HMCTS reform programme - GOV.UK', href: 'https://www.gov.uk/guidance/the-hmcts-reform-programme' },
+  { title: 'Kleros about page', href: 'https://kleros.io/about/' },
+  { title: 'OECD AI in anti-corruption and integrity', href: 'https://www.oecd.org/en/publications/governing-with-artificial-intelligence_795de142-en/full-report/ai-in-fighting-corruption-and-promoting-public-integrity_60f5c50a' },
+  { title: 'OECD blockchain for government', href: 'https://www.oecd.org/en/publications/the-uncertain-promise-of-blockchain-for-government_d031cd67-en.html' },
+];
+---
+
+<BaseLayout
+  title="USACC Future Work"
+  description="A research agenda for USACC based on anti-corruption courts, hybrid missions, civic technology, online dispute resolution, and the limits of existing courts."
+>
+  <header class="subpage-hero">
+    <div class="container">
+      <a class="back-link" href={homeHref}>Back to home</a>
+      <p class="section-kicker">Future Work</p>
+      <h1>What the last 15 years of anti-corruption experiments teach USACC.</h1>
+      <p class="lede narrow">
+        From roughly May 2011 through May 2026, reformers have tested specialized
+        anti-corruption courts, international missions, supranational prosecutors, open
+        contracting, online tribunals, and blockchain dispute systems. The common lesson is sharp:
+        corruption accountability needs independent process, structured evidence, durable funding,
+        technology that proves integrity, and an institutional path for diffuse public harms that
+        ordinary courts are not built to start.
+      </p>
+      <div class="page-actions">
+        <a class="button button-primary" href={frameworkHref}>Read the framework</a>
+        <a class="button button-secondary" href={consensusHref}>Consensus design</a>
+        <a class="button button-secondary" href={blogsHref}>Read the blogs</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container article-shell">
+        <article class="quote-card">
+          <p>
+            The Supreme Court can resolve legal questions. Trial courts can hear proper cases.
+            USACC's opening is earlier: turn diffuse harm into structured, reviewed,
+            referral-ready corruption matters.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Research Map</p>
+          <h2>Similar initiatives point toward a court-adjacent civic institution.</h2>
+          <div class="table-wrap">
+            <table class="model-table">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Initiative</th>
+                  <th>What it tested</th>
+                  <th>Why it matters for USACC</th>
+                  <th>Source</th>
+                </tr>
+              </thead>
+              <tbody>
+                {initiatives.map((item) => (
+                  <tr>
+                    <td>{item.period}</td>
+                    <td>{item.name}</td>
+                    <td>{item.tested}</td>
+                    <td>{item.lesson}</td>
+                    <td><a href={item.sourceHref}>{item.sourceTitle}</a></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Technology Layer</p>
+          <h2>Technology should make public-interest review harder to capture and easier to audit.</h2>
+          <div class="card-grid two-up signal-grid">
+            {technologyApplications.map((item) => (
+              <section class="mini-card">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </section>
+            ))}
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Institutional Gap</p>
+          <h2>Why existing courts cannot simply do the USACC job.</h2>
+          <div class="table-wrap">
+            <table class="model-table">
+              <thead>
+                <tr>
+                  <th>Institution</th>
+                  <th>Structural limit</th>
+                  <th>USACC opportunity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {courtLimits.map((row) => (
+                  <tr>
+                    <td>{row.institution}</td>
+                    <td>{row.limit}</td>
+                    <td>{row.usacc}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p>
+            This is not an argument that USACC should replace courts. It is an argument that
+            courts are late-stage institutions. They need jurisdiction, parties, claims, records,
+            and remedies. USACC can work upstream by forming the signal, testing the record,
+            funding disciplined review, and routing mature matters into the right public,
+            private, civil, criminal, administrative, or journalistic channel.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Workstreams</p>
+          <h2>The next version of USACC should move from concept to testable institution.</h2>
+          <div class="timeline-grid stage-grid">
+            {workstreams.map((item) => (
+              <section class="timeline-card">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </section>
+            ))}
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Hard Questions</p>
+          <h2>The serious version of USACC has to answer these before launch.</h2>
+          <ul class="article-list">
+            {hardQuestions.map((question) => (
+              <li>{question}</li>
+            ))}
+          </ul>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Synthesis</p>
+          <h2>The future-work thesis.</h2>
+          <p>
+            The last 15 years show that anti-corruption institutions fail when they depend on
+            goodwill from the actors they may investigate, when evidence remains unstructured, or
+            when legitimacy rests on one heroic prosecutor. They also show that technology is not
+            magic. Blockchain can overpromise. AI can become opaque. Digital courts can improve
+            access without changing who gets a case heard.
+          </p>
+          <p>
+            USACC's best future path is therefore hybrid: civic intake, expert review,
+            randomized panels, technology-backed proof of process, careful privacy, transparent
+            funding, and explicit referral lanes to existing courts and agencies. The innovation
+            is not a replacement court. It is a missing upstream institution for diffuse public
+            harms.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Source Library</p>
+          <h2>Research base for this page.</h2>
+          <ul class="article-list">
+            {sourceLinks.map((source) => (
+              <li><a href={source.href}>{source.title}</a></li>
+            ))}
+          </ul>
+        </article>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,173 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const homeHref = import.meta.env.BASE_URL;
+const basePath = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const frameworkHref = `${basePath}framework/`;
+const futureWorkHref = `${basePath}future-work/`;
+const consensusHref = `${basePath}consensus/`;
+
+const posts = [
+  {
+    slug: 'externality-docket',
+    eyebrow: 'Blog 01',
+    title: 'The Externality Docket: why corruption needs a forum before it needs a courtroom',
+    author: 'USACC Research Desk',
+    date: 'May 16, 2026',
+    summary:
+      'Most corruption is not invisible because no one is harmed. It is invisible because the harm is split into pieces too small for any one person to litigate alone.',
+    sections: [
+      {
+        heading: 'The missing plaintiff is the public',
+        paragraphs: [
+          'A bribe, a procurement favor, a quiet regulatory exemption, or a revolving-door reward can be rational for every insider at the table. The public pays later through higher prices, weaker services, dirtier markets, or degraded trust. No single victim has a clean invoice marked "corruption loss."',
+          'That is the externality docket. It is the set of harms that are real enough to be public problems, but too distributed to become ordinary lawsuits without a bridge institution.',
+        ],
+      },
+      {
+        heading: 'Why USACC starts before litigation',
+        paragraphs: [
+          'USACC should not begin by pretending every public grievance is a legal claim. It should begin by asking whether a filing can name the actors, the controlled decision point, the benefit flow, the harmed class, and the time window.',
+          'That early discipline matters. It separates corruption from ordinary policy disagreement and turns anger into a structured record that a prosecutor, inspector general, journalist, civil litigator, or agency could actually use.',
+        ],
+      },
+      {
+        heading: 'A new civic muscle',
+        paragraphs: [
+          'The goal is not to lower the bar for accusation. It is to create a public-interest muscle for developing cases that otherwise dissolve into cynicism. A serious externality docket would make collusive public harm harder to hide without making politics easier to weaponize.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'proof-of-process',
+    eyebrow: 'Blog 02',
+    title: 'Proof-of-Process: the anti-corruption feature that should come before verdicts',
+    author: 'USACC Research Desk',
+    date: 'May 16, 2026',
+    summary:
+      'People do not only distrust outcomes. They distrust the path that produced them. USACC should prove the path before asking anyone to accept a finding.',
+    sections: [
+      {
+        heading: 'Trust is procedural before it is ideological',
+        paragraphs: [
+          'In corruption work, every side expects manipulation. The accused expect a political ambush. Supporters expect institutions to bury the case. Donors worry money will be diverted. Reviewers worry they will be pressured. The public sees the fog and assumes the worst.',
+          'That is why USACC needs proof-of-process. The public should be able to verify that a policy was in force before a case began, reviewers were randomly selected from an eligible pool, conflicts were screened, deadlines were honored, votes were sealed, and escrow moved only after a published gate.',
+        ],
+      },
+      {
+        heading: 'The ledger is not the courtroom',
+        paragraphs: [
+          'A blockchain or public audit ledger does not need to hold sensitive evidence. It can hold hashes, timestamps, policy versions, vote commitments, draw proofs, and funding events. The protected case room can hold identities, privileged material, whistleblower information, and sealed exhibits.',
+          'That split lets USACC become more transparent without becoming reckless. It proves that the machine ran correctly without dumping the contents of the machine onto the internet.',
+        ],
+      },
+      {
+        heading: 'Process can be a remedy',
+        paragraphs: [
+          'For many early USACC matters, the first remedy may not be damages or disqualification. It may be a clean record: a public explanation of why a case was admitted, rejected, supplemented, audited, or referred. In a low-trust environment, a reasoned process can itself be civic infrastructure.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'randomized-review',
+    eyebrow: 'Blog 03',
+    title: 'Against the Hero Prosecutor: why USACC should be built around randomized review',
+    author: 'USACC Research Desk',
+    date: 'May 16, 2026',
+    summary:
+      'Anti-corruption stories often search for one brave prosecutor. Durable anti-corruption systems should be designed so they do not need one.',
+    sections: [
+      {
+        heading: 'The hero model is brittle',
+        paragraphs: [
+          'A charismatic anti-corruption figure can focus public attention, but a system that depends on one person is easy to attack. Remove the person, smear the person, starve the office, or wait for fatigue. The reform collapses into biography.',
+          'USACC should take the opposite path. Randomized reviewer assignment, stage rotation, conflict screening, written reasons, and appeal panels make legitimacy less personal and harder to capture.',
+        ],
+      },
+      {
+        heading: 'Sortition is not chaos',
+        paragraphs: [
+          'Random review does not mean random people making random decisions. It means drawing from qualified pools under published rules. A procurement matter can go to people who understand procurement. A pension matter can go to fiduciary and actuarial reviewers. A campaign-finance matter can go to election-law reviewers.',
+          'The randomness is a defense against steering. The qualification rules are a defense against incompetence. The written reasons are a defense against arbitrary power.',
+        ],
+      },
+      {
+        heading: 'Build institutions that survive success',
+        paragraphs: [
+          'Anti-corruption bodies are often tolerated until they become effective. USACC should assume that success attracts pressure. The design should therefore distribute authority, preserve audit trails, rotate panels, publish policies, and make capture visible. The system should not ask one person to be brave forever.',
+        ],
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="USACC Blogs"
+  description="Original essays on the US Anti-Corruption Court concept, including diffuse harm, proof-of-process, and randomized review."
+>
+  <header class="subpage-hero">
+    <div class="container">
+      <a class="back-link" href={homeHref}>Back to home</a>
+      <p class="section-kicker">Blogs</p>
+      <h1>Three notes on what USACC is really trying to build.</h1>
+      <p class="lede narrow">
+        These essays are intentionally exploratory. They treat USACC as a civic institution under
+        design, not a finished court: a way to convert diffuse public harm into disciplined case
+        formation, prove process before outcome, and distribute review so the system does not
+        depend on one heroic actor.
+      </p>
+      <div class="page-actions">
+        <a class="button button-primary" href={futureWorkHref}>Future work</a>
+        <a class="button button-secondary" href={frameworkHref}>Framework</a>
+        <a class="button button-secondary" href={consensusHref}>Consensus design</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container article-shell">
+        <article class="quote-card">
+          <p>
+            USACC is not only a court idea. It is a theory of how public harm becomes legible
+            enough for institutions to act.
+          </p>
+        </article>
+
+        <div class="card-grid thirds blog-index">
+          {posts.map((post) => (
+            <article class="info-card">
+              <p class="card-kicker">{post.eyebrow}</p>
+              <h3>{post.title}</h3>
+              <p>{post.summary}</p>
+              <a class="button button-secondary" href={`#${post.slug}`}>Read essay</a>
+            </article>
+          ))}
+        </div>
+
+        {posts.map((post) => (
+          <article class="article-card blog-post" id={post.slug}>
+            <p class="section-kicker">{post.eyebrow}</p>
+            <h2>{post.title}</h2>
+            <p class="blog-meta">By {post.author} / {post.date}</p>
+            <p>{post.summary}</p>
+
+            {post.sections.map((section) => (
+              <section class="blog-section">
+                <h3>{section.heading}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p>{paragraph}</p>
+                ))}
+              </section>
+            ))}
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+</BaseLayout>
