@@ -8,10 +8,17 @@
     "install:browsers": "playwright install chromium",
     "test": "playwright test --workers=1",
     "test:headed": "playwright test --workers=1 --headed",
+    "test:puppeteer": "node --test \"puppeteer/**/*.test.mjs\"",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
+    "puppeteer": "^24.0.0",
     "typescript": "^5.9.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "puppeteer"
+    ]
   }
 }
