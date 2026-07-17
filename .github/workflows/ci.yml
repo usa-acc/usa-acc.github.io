@@ -43,5 +43,7 @@ jobs:
         working-directory: tests
       - run: pnpm test
         working-directory: tests
+      - run: pnpm exec puppeteer browsers install chrome
+        working-directory: tests
       - run: pnpm run test:puppeteer
         working-directory: tests

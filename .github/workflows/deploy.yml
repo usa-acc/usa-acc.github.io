@@ -58,6 +58,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
         working-directory: tests
       - run: pnpm --dir tests exec playwright install --with-deps chromium
+      - run: pnpm --dir tests exec puppeteer browsers install chrome
       - name: Playwright suite against live site
         run: pnpm test
         working-directory: tests
