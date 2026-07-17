@@ -59,7 +59,11 @@ before(async () => {
     await waitForServer(`${baseUrl}/`);
   }
 
-  browser = await puppeteer.launch();
+  browser = await puppeteer.launch({
+    // GitHub ubuntu-24 runners restrict unprivileged user namespaces (AppArmor),
+    // which breaks Chrome's sandbox; disable it in CI only.
+    args: process.env.CI ? ['--no-sandbox', '--disable-dev-shm-usage'] : [],
+  });
   page = await browser.newPage();
   homeResponse = await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle2' });
 });
