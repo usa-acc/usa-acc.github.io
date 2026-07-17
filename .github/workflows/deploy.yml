@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Build and upload Astro site
-        uses: withastro/action@v6
+        uses: withastro/action@e84f40bd8d2caa9e768ec82ad30dd81f0b280853 # v6
         env:
           PUBLIC_SIGNUP_ENDPOINT: ${{ vars.PUBLIC_SIGNUP_ENDPOINT }}
           PUBLIC_SIGNUP_SOURCE: ${{ vars.PUBLIC_SIGNUP_SOURCE || 'usacc-interest-list' }}
