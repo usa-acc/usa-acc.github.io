@@ -1,0 +1,351 @@
+---
+import MermaidLoader from '../components/MermaidLoader.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const homeHref = import.meta.env.BASE_URL;
+const basePath = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const frameworkHref = `${basePath}framework/`;
+const mdpHref = `${basePath}modeling/mdp/`;
+const pomdpHref = `${basePath}modeling/pomdp/`;
+
+const conceptRows = [
+  {
+    kleros: 'Random juror selection',
+    usacc:
+      'Draw reviewers from verified legal, audit, policy, and civic pools using public randomness, conflict filters, and stage-specific eligibility.',
+    caution:
+      'Selection should not become token-weighted power over high-stakes accusations.',
+  },
+  {
+    kleros: 'Specialized courts',
+    usacc:
+      'Create specialist panels for procurement, campaign finance, pensions, public contracting, regulatory capture, public benefits, and institutional fiduciary abuse.',
+    caution:
+      'Specialization must improve competence without creating captured professional clubs.',
+  },
+  {
+    kleros: 'Evidence periods and case policies',
+    usacc:
+      'Use a published case policy, defined evidence windows, structured defendant-conduct-time-window scoping, and a standard public-interest harm map.',
+    caution:
+      'Rules should be locked for a case once the case starts, except through narrow due-process corrections.',
+  },
+  {
+    kleros: 'Coherent voting incentives',
+    usacc:
+      'Reward careful, reasoned participation and penalize absence, conflicts, bad-faith disclosure failures, or voting without engaging the record.',
+    caution:
+      'USACC should reward reasoned judgment, not blind agreement with a majority.',
+  },
+  {
+    kleros: 'Appeal rounds with larger juries',
+    usacc:
+      'Let higher-stakes gates escalate to larger panels, stricter evidence requirements, and more formal written reasons before trial funding or public findings.',
+    caution:
+      'Appeals should add legitimacy without turning every gate into an endless contest.',
+  },
+  {
+    kleros: 'Transparent smart-contract execution',
+    usacc:
+      'Publish policy hashes, reviewer-draw proofs, vote commitments, escrow state changes, and decision timestamps while keeping sensitive evidence protected.',
+    caution:
+      'Transparency should prove process integrity without exposing whistleblowers or prejudicing respondents.',
+  },
+  {
+    kleros: 'Refuse to arbitrate',
+    usacc:
+      'Give panels an explicit way to decline matters that are outside scope, legally defective, unsafe to process, or built on unacceptable evidence.',
+    caution:
+      'Refusal needs written reasons so dismissal does not look like quiet political avoidance.',
+  },
+];
+
+const consensusLayers = [
+  {
+    title: 'Public signal',
+    body:
+      'Verified support can show that a diffuse harm matters to a real constituency, but it should never decide guilt. It is an attention and prioritization signal.',
+  },
+  {
+    title: 'Evidence signal',
+    body:
+      'Documents, data, testimony, metadata, and corroboration should be scored for relevance, independence, completeness, and manipulation risk.',
+  },
+  {
+    title: 'Expert signal',
+    body:
+      'Qualified reviewers test legal viability, fiduciary duties, benefit flow, causation, and remedy fit before a public campaign becomes a formal case.',
+  },
+  {
+    title: 'Economic signal',
+    body:
+      'Escrow readiness, filing bonds, and cost controls show whether a case can be processed without turning platform attention into uncontrolled spending.',
+  },
+  {
+    title: 'Legitimacy signal',
+    body:
+      'Conflict checks, random assignment, sealed voting, appeals, and public audit trails show whether the process deserves trust even from losing parties.',
+  },
+];
+
+const directUses = [
+  {
+    title: 'Nonbinding advisory juries',
+    body:
+      'USACC could use Kleros-like panels to test whether neutral outsiders understand a case theory, whether a claim is properly scoped, or whether an evidence packet meets a published policy.',
+  },
+  {
+    title: 'Platform governance disputes',
+    body:
+      'Kleros itself or a Kleros-style integration could resolve bounded platform questions: duplicate filings, registry challenges, moderator actions, escrow-trigger disputes, or whether a case fits a published category.',
+  },
+  {
+    title: 'Whitelisted expert subcourts',
+    body:
+      'A custom court could limit juror eligibility to licensed attorneys, auditors, former inspectors general, procurement specialists, or trained civic reviewers when expertise is necessary.',
+  },
+  {
+    title: 'Process audit layer',
+    body:
+      'Blockchain records can verify that the stated policy, random draw, evidence deadline, voting window, appeal path, and escrow release actually happened as advertised.',
+  },
+];
+
+const pilotSteps = [
+  'Run a no-chain shadow-jury pilot using structured case packets, random reviewer draws, sealed ballots, written reasons, and appeal rounds.',
+  'Simulate crypto-economic incentives with points, reviewer reputation, abstention penalties, and conflict-audit consequences before adding real financial stakes.',
+  'Publish a policy registry for intake categories, evidence windows, appeal triggers, recusal rules, and escrow gates.',
+  'Anchor only process metadata at first: policy hashes, draw seeds, timestamps, vote commitments, and escrow state transitions.',
+  'Use Kleros itself for bounded disputes where the parties agree in advance, then evaluate whether a custom USACC court is needed.',
+  'Keep core corruption findings under a due-process wrapper with identifiable accountability, reasoned decisions, and legal review.',
+];
+
+const guardrails = [
+  'No token-holder vote should decide whether a person is corrupt.',
+  'No public pile-on should substitute for evidence, notice, and the right to respond.',
+  'No sensitive evidence should be placed on a public chain; hashes and commitments are enough for many audit purposes.',
+  'No reviewer should be punished merely for dissenting when the dissent is reasoned, disclosed, and tied to the record.',
+  'No case should have its rules changed midstream because a powerful party dislikes the trajectory.',
+  'No one should be able to buy reviewer influence by buying more governance tokens.',
+];
+
+const sourceLinks = [
+  {
+    title: 'Kleros introduction',
+    href: 'https://docs.kleros.io/',
+  },
+  {
+    title: 'Kleros Court process',
+    href: 'https://docs.kleros.io/products/court',
+  },
+  {
+    title: 'Kleros and credible neutrality',
+    href: 'https://docs.kleros.io/products/court/kleros-and-credible-neutrality',
+  },
+  {
+    title: 'Kleros Enterprise discussion',
+    href: 'https://docs.kleros.io/products/enterprise',
+  },
+];
+---
+
+<BaseLayout
+  title="USACC Consensus | Kleros-Inspired Design"
+  description="How Kleros-style decentralized dispute resolution, random juries, incentives, appeals, and audit trails could inform the US Anti-Corruption Court concept."
+>
+  <Fragment slot="head">
+    <MermaidLoader />
+  </Fragment>
+
+  <header class="subpage-hero">
+    <div class="container">
+      <a class="back-link" href={homeHref}>Back to home</a>
+      <p class="section-kicker">Consensus Brief</p>
+      <h1>Consensus as an anti-capture layer.</h1>
+      <p class="lede narrow">
+        Kleros is useful to USACC in two different ways: as a possible tool for bounded platform
+        disputes, and as a pattern library for credible neutrality. The important move is not to
+        copy a token court into a public corruption project. It is to borrow the institutional
+        logic: random selection, explicit rules, sealed voting, appeal rounds, economic
+        accountability, and public proof that the process was followed.
+      </p>
+      <div class="page-actions">
+        <a class="button button-primary" href={frameworkHref}>Read the framework</a>
+        <a class="button button-secondary" href={mdpHref}>Compare the MDP</a>
+        <a class="button button-secondary" href={pomdpHref}>Compare the POMDP</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container article-shell">
+        <article class="quote-card">
+          <p>
+            The best Kleros lesson for USACC is not "let the crowd decide." It is "make the
+            decision process hard to capture, easy to audit, and expensive to game."
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Starting Point</p>
+          <h2>Kleros turns dispute resolution into a rule-bound consensus mechanism.</h2>
+          <p>
+            In broad terms, Kleros is a decentralized dispute-resolution protocol. Disputes are
+            routed to a relevant court, jurors are selected from a pool, parties submit evidence,
+            jurors vote, incentives encourage coherent decision-making, and appeals can bring in
+            larger panels. Blockchain infrastructure makes many procedural events publicly
+            verifiable.
+          </p>
+          <p>
+            USACC has a different domain. It would deal with allegations of collusion, public
+            harm, institutional capture, and reputational or legal consequences. That means the
+            Kleros idea has to be translated carefully. The target is not a free-for-all vote on
+            guilt. The target is a consensus architecture around intake, evidence quality,
+            reviewer assignment, escalation, funding gates, and public legitimacy.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Translation</p>
+          <h2>What USACC can borrow, and what it must change.</h2>
+          <div class="table-wrap">
+            <table class="model-table">
+              <thead>
+                <tr>
+                  <th>Kleros concept</th>
+                  <th>USACC translation</th>
+                  <th>Design caution</th>
+                </tr>
+              </thead>
+              <tbody>
+                {conceptRows.map((row) => (
+                  <tr>
+                    <td>{row.kleros}</td>
+                    <td>{row.usacc}</td>
+                    <td>{row.caution}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Consensus Stack</p>
+          <h2>USACC should combine several weaker signals into a stronger institutional signal.</h2>
+          <div class="card-grid two-up signal-grid">
+            {consensusLayers.map((layer) => (
+              <section class="mini-card">
+                <h3>{layer.title}</h3>
+                <p>{layer.body}</p>
+              </section>
+            ))}
+          </div>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Case Flow</p>
+          <h2>A Kleros-inspired USACC process would treat each gate as a consensus event.</h2>
+          <div class="chart-card">
+            <pre class="mermaid">
+flowchart TD
+  Filing["Structured corruption filing"] --> Scope["Scope: defendants, conduct, time window"]
+  Scope --> Signal["Public, evidence, expert, economic, and legitimacy signals"]
+  Signal --> Draw["Random qualified panel draw"]
+  Draw --> Vote["Sealed vote with written reasons"]
+  Vote --> Gate["Gate: admit, supplement, audit, close, or escalate"]
+  Gate --> Appeal["Appeal or larger panel for higher-stakes gates"]
+  Gate --> Registry["Public audit registry"]
+  Appeal --> Registry
+            </pre>
+          </div>
+          <p>
+            The diagram is deliberately procedural. Consensus should first govern whether the
+            matter is complete, credible, within scope, mature enough, and process-safe. Only
+            after those gates does the system approach public findings or remedies.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Hybrid Architecture</p>
+          <h2>The public chain proves process; the protected case room holds sensitive substance.</h2>
+          <div class="chart-card">
+            <pre class="mermaid">
+flowchart LR
+  CaseRoom["Protected case room: identities, sealed evidence, legal analysis"] --> Rules["Rules engine"]
+  PublicChain["Public ledger: policy hashes, draw seeds, vote commitments, escrow state"] --> Rules
+  Rules --> Panel["Qualified reviewer panel"]
+  Panel --> Decision["Reasoned gate decision"]
+  Decision --> PublicRecord["Public decision summary and audit trail"]
+  Decision --> PrivateRecord["Protected record for appeals and legal review"]
+            </pre>
+          </div>
+          <p>
+            This is where the blockchain part becomes practical. USACC does not need to publish
+            every document or identity. It can publish cryptographic commitments and process
+            events that let outsiders verify that the rules, timing, randomization, votes, and
+            funding gates were not quietly rewritten.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Direct Use</p>
+          <h2>Where Kleros itself could help before USACC builds a custom system.</h2>
+          <div class="timeline-grid stage-grid">
+            {directUses.map((item) => (
+              <section class="timeline-card">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </section>
+            ))}
+          </div>
+          <p>
+            The cleanest early uses are bounded and procedural. For example: is this filing a
+            duplicate, did a moderator correctly apply the published policy, has an escrow
+            release condition been met, or is a registry challenge valid? Those questions are
+            much safer than asking an anonymous token-weighted jury to resolve a full public
+            corruption allegation.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Pilot Path</p>
+          <h2>Build toward crypto-economic dispute resolution in layers.</h2>
+          <ol class="article-list article-list-numbered">
+            {pilotSteps.map((step) => (
+              <li>{step}</li>
+            ))}
+          </ol>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Guardrails</p>
+          <h2>The consensus layer must strengthen due process, not replace it.</h2>
+          <ul class="article-list">
+            {guardrails.map((guardrail) => (
+              <li>{guardrail}</li>
+            ))}
+          </ul>
+          <p>
+            The strongest version of this idea is a hybrid institution: legal seriousness from
+            conventional due process, anti-capture properties from random selection and public
+            auditability, and operational discipline from explicit stage gates.
+          </p>
+        </article>
+
+        <article class="article-card">
+          <p class="section-kicker">Reference Lens</p>
+          <h2>Official Kleros materials used for this design translation.</h2>
+          <ul class="article-list">
+            {sourceLinks.map((source) => (
+              <li><a href={source.href}>{source.title}</a></li>
+            ))}
+          </ul>
+        </article>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

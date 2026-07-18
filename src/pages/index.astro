@@ -9,6 +9,16 @@ import {
 } from '../data/siteContent';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
+const basePath = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const homeHref = import.meta.env.BASE_URL;
+const frameworkHref = `${basePath}framework/`;
+const modelingHref = `${basePath}modeling/mdp/`;
+const consensusHref = `${basePath}consensus/`;
+const futureWorkHref = `${basePath}future-work/`;
+const blogsHref = `${basePath}blogs/`;
+
 const navItems = [
   { href: '#mission', label: 'Mission Statement' },
   { href: '#whoarewe', label: 'Who Are We' },
@@ -16,6 +26,9 @@ const navItems = [
   { href: '#details', label: 'Details' },
   { href: '#platform', label: 'Platform' },
   { href: '#modeling', label: 'Modeling' },
+  { href: consensusHref, label: 'Consensus' },
+  { href: futureWorkHref, label: 'Future Work' },
+  { href: blogsHref, label: 'Blogs' },
   { href: '#support', label: 'Support' },
 ];
 
@@ -59,13 +72,6 @@ const modelingPages = [
     cta: 'Open POMDP model',
   },
 ];
-
-const basePath = import.meta.env.BASE_URL.endsWith('/')
-  ? import.meta.env.BASE_URL
-  : `${import.meta.env.BASE_URL}/`;
-const homeHref = import.meta.env.BASE_URL;
-const frameworkHref = `${basePath}framework/`;
-const modelingHref = `${basePath}modeling/mdp/`;
 ---
 
 <BaseLayout
@@ -108,6 +114,7 @@ const modelingHref = `${basePath}modeling/mdp/`;
             <a class="button button-primary" href="#support">Join the interest list</a>
             <a class="button button-secondary" href={frameworkHref}>Read the framework</a>
             <a class="button button-secondary" href={modelingHref}>Explore modeling</a>
+            <a class="button button-secondary" href={consensusHref}>Consensus design</a>
           </div>
 
           <div class="stat-row">
@@ -370,6 +377,12 @@ const modelingHref = `${basePath}modeling/mdp/`;
         </div>
         <div>
           <a href={frameworkHref}>Framework</a>
+          <span class="footer-separator">/</span>
+          <a href={consensusHref}>Consensus</a>
+          <span class="footer-separator">/</span>
+          <a href={futureWorkHref}>Future Work</a>
+          <span class="footer-separator">/</span>
+          <a href={blogsHref}>Blogs</a>
           <span class="footer-separator">/</span>
           <a href={`${basePath}modeling/mdp/`}>MDP</a>
           <span class="footer-separator">/</span>
