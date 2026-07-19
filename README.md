@@ -1,5 +1,8 @@
 # USACC Website
 
+[![ci](https://github.com/usa-acc/usa-acc.github.io/actions/workflows/ci.yml/badge.svg)](https://github.com/usa-acc/usa-acc.github.io/actions/workflows/ci.yml)
+[![deploy](https://github.com/usa-acc/usa-acc.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/usa-acc/usa-acc.github.io/actions/workflows/deploy.yml)
+
 Static Astro website for the US Anti-Corruption Court (`USACC`) nonprofit project, designed for GitHub Pages and a client-side Google Apps Script signup flow.
 
 ## What is included
@@ -40,7 +43,12 @@ Typical setup:
 
 ## GitHub Pages deployment
 
-The workflow in [.github/workflows/deploy.yml](/Users/maca5/codes/ores/us-anti-corruption-court-project/.github/workflows/deploy.yml:1) builds and deploys the site using GitHub Actions.
+Pull requests and pushes to `main` run the static build, Astro checks,
+Playwright tests, and Puppeteer smoke tests. A successful `main` CI run then
+deploys that exact commit to GitHub Pages and runs both browser suites against
+the live site. The deployment workflow can also be started manually.
+
+The workflow in [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) builds and deploys the site using GitHub Actions.
 
 Repository variables to set in GitHub:
 
