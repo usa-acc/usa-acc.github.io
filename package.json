@@ -12,6 +12,7 @@
     "check": "astro check"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.111.0",
     "astro": "^5.7.0"
   },
   "devDependencies": {

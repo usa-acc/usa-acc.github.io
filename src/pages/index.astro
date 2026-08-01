@@ -1,4 +1,5 @@
 ---
+import AuthSupport from '../components/AuthSupport.astro';
 import SignupForm from '../components/SignupForm.astro';
 import {
   caseStages,
@@ -361,7 +362,10 @@ const modelingPages = [
           </div>
         </div>
 
-        <SignupForm />
+        <div class="support-forms">
+          <SignupForm />
+          <AuthSupport />
+        </div>
       </div>
     </section>
   </main>

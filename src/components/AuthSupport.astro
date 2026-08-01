@@ -1,0 +1,208 @@
+---
+const supportEmail = import.meta.env.PUBLIC_SUPPORT_EMAIL || '';
+---
+
+<div class="signup-card auth-card" data-auth-card data-support-email={supportEmail}>
+  <div class="signup-copy">
+    <p class="section-kicker">Member Access</p>
+    <h3>Sign in for direct support</h3>
+    <p>
+      Sign in with a one-time email link to contact the USACC team directly. No password to
+      create, no password to remember.
+    </p>
+  </div>
+
+  <form data-auth-signin-form hidden>
+    <label class="field">
+      <span>Email address</span>
+      <input
+        type="email"
+        name="email"
+        inputmode="email"
+        autocomplete="email"
+        placeholder="you@example.org"
+        required
+      />
+    </label>
+
+    <button class="button button-primary button-block" type="submit" data-auth-signin-button>
+      Email me a sign-in link
+    </button>
+  </form>
+
+  <div data-auth-session hidden>
+    <p class="auth-session-row">
+      Signed in as <strong data-auth-user-email></strong>
+    </p>
+
+    <form data-auth-support-form>
+      <label class="field">
+        <span>How can we help?</span>
+        <textarea
+          name="message"
+          rows="4"
+          placeholder="Questions, feedback, or ways you would like to get involved..."
+        ></textarea>
+      </label>
+
+      <button class="button button-primary button-block" type="submit">
+        Email USACC support
+      </button>
+    </form>
+
+    <button class="button button-secondary button-block" type="button" data-auth-signout-button>
+      Sign out
+    </button>
+  </div>
+
+  <p class="signup-feedback" data-auth-feedback>
+    Passwordless sign-in via Supabase. We only use your email to send the sign-in link and to
+    reply to your support request.
+  </p>
+</div>
+
+<script>
+  import { getSupabaseClient } from '../lib/supabaseClient';
+
+  const card = document.querySelector<HTMLElement>('[data-auth-card]');
+
+  if (card) {
+    const supabase = getSupabaseClient();
+    const signinForm = card.querySelector<HTMLFormElement>('[data-auth-signin-form]');
+    const signinButton = card.querySelector<HTMLButtonElement>('[data-auth-signin-button]');
+    const sessionPanel = card.querySelector<HTMLElement>('[data-auth-session]');
+    const userEmailEl = card.querySelector<HTMLElement>('[data-auth-user-email]');
+    const supportForm = card.querySelector<HTMLFormElement>('[data-auth-support-form]');
+    const signoutButton = card.querySelector<HTMLButtonElement>('[data-auth-signout-button]');
+    const feedback = card.querySelector<HTMLElement>('[data-auth-feedback]');
+    const supportEmail = card.dataset.supportEmail || '';
+
+    const setFeedback = (message: string, state = 'neutral') => {
+      if (!feedback) return;
+      feedback.textContent = message;
+      feedback.dataset.state = state;
+    };
+
+    const showSignedOut = () => {
+      if (signinForm) signinForm.hidden = false;
+      if (sessionPanel) sessionPanel.hidden = true;
+    };
+
+    const showSignedIn = (email: string) => {
+      if (signinForm) signinForm.hidden = true;
+      if (sessionPanel) sessionPanel.hidden = false;
+      if (userEmailEl) userEmailEl.textContent = email;
+    };
+
+    if (!supabase) {
+      showSignedOut();
+      if (signinButton) signinButton.disabled = true;
+      setFeedback(
+        'Sign-in is not configured yet. Set PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY before publishing.',
+        'error'
+      );
+    } else {
+      supabase.auth
+        .getSession()
+        .then(({ data }) => {
+          const email = data.session?.user?.email;
+          if (email) {
+            showSignedIn(email);
+          } else {
+            showSignedOut();
+          }
+        })
+        .catch(() => showSignedOut());
+
+      supabase.auth.onAuthStateChange((_event, session) => {
+        const email = session?.user?.email;
+        if (email) {
+          showSignedIn(email);
+          setFeedback('You are signed in.', 'success');
+        } else {
+          showSignedOut();
+        }
+      });
+
+      signinForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const emailInput = signinForm.querySelector<HTMLInputElement>('input[name="email"]');
+        const email = emailInput?.value.trim();
+
+        if (!email) {
+          setFeedback('Enter your email address to receive a sign-in link.', 'error');
+          return;
+        }
+
+        try {
+          if (signinButton) {
+            signinButton.disabled = true;
+            signinButton.textContent = 'Sending link...';
+          }
+          setFeedback('Sending your sign-in link...', 'pending');
+
+          const redirectTo = `${window.location.origin}${window.location.pathname}#support`;
+          const { error } = await supabase.auth.signInWithOtp({
+            email,
+            options: { emailRedirectTo: redirectTo },
+          });
+
+          if (error) throw error;
+
+          signinForm.reset();
+          setFeedback(
+            'Check your inbox for a one-time sign-in link. It signs you in here with no password.',
+            'success'
+          );
+        } catch (error) {
+          setFeedback('The sign-in link could not be sent. Please try again.', 'error');
+        } finally {
+          if (signinButton) {
+            signinButton.disabled = false;
+            signinButton.textContent = 'Email me a sign-in link';
+          }
+        }
+      });
+
+      supportForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        if (!supportEmail) {
+          setFeedback(
+            'Support email is not configured yet. Set PUBLIC_SUPPORT_EMAIL before publishing.',
+            'error'
+          );
+          return;
+        }
+
+        const { data } = await supabase.auth.getSession();
+        const userEmail = data.session?.user?.email || '';
+        const messageInput = supportForm.querySelector<HTMLTextAreaElement>(
+          'textarea[name="message"]'
+        );
+        const message = messageInput?.value.trim() || '';
+
+        const subject = 'USACC support request';
+        const bodyLines = [message, '', `From: ${userEmail}`, `Page: ${window.location.href}`];
+        const mailto = `mailto:${encodeURIComponent(supportEmail)}?subject=${encodeURIComponent(
+          subject
+        )}&body=${encodeURIComponent(bodyLines.join('\n'))}`;
+
+        window.location.href = mailto;
+        setFeedback('Opening your email client with your signed-in address prefilled.', 'success');
+      });
+
+      signoutButton?.addEventListener('click', async () => {
+        try {
+          setFeedback('Signing you out...', 'pending');
+          const { error } = await supabase.auth.signOut();
+          if (error) throw error;
+          setFeedback('You are signed out.', 'success');
+        } catch (error) {
+          setFeedback('Sign-out did not complete. Please try again.', 'error');
+        }
+      });
+    }
+  }
+</script>
