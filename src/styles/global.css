@@ -506,7 +506,8 @@ li + li {
   color: var(--text-soft);
 }
 
-.field input {
+.field input,
+.field textarea {
   width: 100%;
   padding: 1rem 1.05rem;
   border-radius: 18px;
@@ -516,9 +517,31 @@ li + li {
   font: inherit;
 }
 
-.field input:focus {
+.field textarea {
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus {
   outline: 2px solid rgba(15, 76, 129, 0.2);
   outline-offset: 2px;
+}
+
+.support-forms {
+  display: grid;
+  gap: 1rem;
+}
+
+.auth-card form,
+.auth-card [data-auth-session] {
+  display: grid;
+  gap: 1rem;
+}
+
+.auth-session-row {
+  color: var(--text-soft);
+  font-size: 0.94rem;
+  overflow-wrap: anywhere;
 }
 
 .honeypot-field {
