@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { verifyPomdpCompleteness } from '../../lib/adaptiveControl';
+
+const basePath = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const report = verifyPomdpCompleteness();
+const methods = [
+  ['Rust', 'Stateright state-space exploration', 'Kani bounded model checking'],
+  ['C', 'Frama-C analysis of ACSL contracts', 'CBMC bounded model checking'],
+  ['TypeScript', 'XState graph exploration', 'fast-check generative properties'],
+  ['Dart / Flutter', 'dart_fsm executable graph', 'Glados generative properties'],
+];
+---
+
+<BaseLayout
+  title="USACC | Adaptive-control formal assurance"
+  description="The fail-closed state machine and cross-language formal checks for USA-ACC's finite MDP/POMDP contract."
+>
+  <main>
+    <section class="hero section-shell">
+      <p class="eyebrow">Adaptive-control assurance</p>
+      <h1>The model cannot activate until its finite contract is complete.</h1>
+      <p class="lede">
+        USA-ACC treats model lifecycle as a guarded state machine. Identity degradation,
+        missing proof evidence, incomplete distributions, and unspecified events leave the
+        system in its current state.
+      </p>
+      <div class="button-row">
+        <a class="button button-primary" href={`${basePath}modeling/mdp/`}>Review the MDP</a>
+        <a class="button button-secondary" href={`${basePath}modeling/pomdp/`}>Review the POMDP</a>
+      </div>
+    </section>
+
+    <section class="section-shell section-block" aria-labelledby="contract-status">
+      <p class="eyebrow">Committed finite boundary</p>
+      <h2 id="contract-status">Contract status: {report.complete ? 'complete' : 'rejected'}</h2>
+      <div class="card-grid three-up">
+        <article class="info-card">
+          <h3>{report.checkedStateActionPairs}</h3>
+          <p>State/action pairs have total transition, observation, and finite reward rows.</p>
+        </article>
+        <article class="info-card">
+          <h3>1,000,000 PPM</h3>
+          <p>Every probability distribution and the initial belief normalize exactly.</p>
+        </article>
+        <article class="info-card">
+          <h3>Fail closed</h3>
+          <p>Unspecified transitions, degraded authentication, and unmet guards are denied.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-shell section-block" aria-labelledby="method-matrix">
+      <p class="eyebrow">Independent checks</p>
+      <h2 id="method-matrix">Two methods on every application-language surface.</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Language</th><th>Executable / graph method</th><th>Independent property method</th></tr></thead>
+          <tbody>
+            {methods.map(([language, graph, property]) => (
+              <tr><th scope="row">{language}</th><td>{graph}</td><td>{property}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section-shell section-block" aria-labelledby="integration-boundaries">
+      <p class="eyebrow">Integration boundaries</p>
+      <h2 id="integration-boundaries">One authority, versioned adapters, bounded evidence.</h2>
+      <div class="card-grid two-up">
+        <article class="info-card"><h3>Opto-Sync</h3><p>Only versioned <code>fm.adapter.stream.v1</code> envelopes for this model revision are accepted.</p></article>
+        <article class="info-card"><h3>Shared Auth</h3><p>Authenticates identity; USA-ACC separately owns and evaluates product authorization.</p></article>
+        <article class="info-card"><h3>Ores OTEL</h3><p>Emits bounded <code>next-loggers/v1</code> transition evidence without tokens or identity fields.</p></article>
+        <article class="info-card"><h3>Zed</h3><p>Records package intent and audited revisions while keeping registry resolution evidence separate.</p></article>
+      </div>
+    </section>
+
+    <section class="section-shell section-block">
+      <div class="callout-card">
+        <h2>The proof is deliberately bounded.</h2>
+        <p>
+          These checks prove properties of the committed finite model and lifecycle. They do not
+          prove that observations are unbiased, the world is fully represented, or a policy is
+          legally or ethically adequate. Human review, monitoring, appeal, and suspension remain
+          mandatory controls.
+        </p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

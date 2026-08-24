@@ -1,0 +1,32 @@
+[package]
+org = "usa-acc"
+name = "website-adaptive-control"
+version = "0.1.0"
+description = "XState and fast-check assurance surface for the USA-ACC finite POMDP"
+license = "MIT"
+keywords = ["formal-methods", "pomdp", "xstate", "astro"]
+language = "nodejs"
+
+[package.repository]
+vcs = "git"
+url = "https://github.com/usa-acc/usa-acc.github.io"
+
+# Audited Opto-Sync, Shared Auth, and Ores OTEL coordinates are documented at
+# the adapter boundary. Installation stays frozen and fail-closed until the
+# public Zed registry provides immutable resolution evidence.
+
+[build]
+command = "pnpm run build"
+outputs = ["dist"]
+
+[publish]
+include_readme = true
+tag_format = "v{version}"
+smoke_test = "pnpm --dir \"$ZED_PKG_TEST_TARGET\" run test:formal"
+exclude = ["node_modules/**", "dist/**", ".astro/**", "tests/**"]
+
+[install]
+adapter = "none"
+
+[scripts]
+test = "pnpm run test:formal"

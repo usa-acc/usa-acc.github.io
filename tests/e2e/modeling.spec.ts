@@ -49,4 +49,14 @@ test.describe('modeling pages', () => {
     await expect(page.locator('.chart-card svg')).toHaveCount(2);
     await expect(page.getByRole('columnheader', { name: 'POMDP response' })).toBeVisible();
   });
+
+  test('formal assurance page exposes the cross-language proof matrix', async ({ page }) => {
+    await page.goto('/modeling/formal-assurance/');
+    await expect(
+      page.getByRole('heading', { name: 'The model cannot activate until its finite contract is complete.' }),
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Contract status: complete' })).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'Kani bounded model checking' })).toBeVisible();
+    await expect(page.getByText('The proof is deliberately bounded.')).toBeVisible();
+  });
 });

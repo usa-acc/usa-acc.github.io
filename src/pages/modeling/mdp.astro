@@ -8,6 +8,7 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
   : `${import.meta.env.BASE_URL}/`;
 const frameworkHref = `${basePath}framework/`;
 const pomdpHref = `${basePath}modeling/pomdp/`;
+const formalAssuranceHref = `${basePath}modeling/formal-assurance/`;
 
 const tupleRows = [
   {
@@ -145,6 +146,7 @@ const stageControls = [
       </p>
       <div class="page-actions">
         <a class="button button-primary" href={pomdpHref}>Compare the POMDP</a>
+        <a class="button button-secondary" href={formalAssuranceHref}>Inspect formal assurance</a>
         <a class="button button-secondary" href={frameworkHref}>Read the framework</a>
       </div>
     </div>

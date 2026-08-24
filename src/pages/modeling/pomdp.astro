@@ -8,6 +8,7 @@ const basePath = import.meta.env.BASE_URL.endsWith('/')
   : `${import.meta.env.BASE_URL}/`;
 const frameworkHref = `${basePath}framework/`;
 const mdpHref = `${basePath}modeling/mdp/`;
+const formalAssuranceHref = `${basePath}modeling/formal-assurance/`;
 
 const tupleRows = [
   {
@@ -155,6 +156,7 @@ const observationExamples = [
       </p>
       <div class="page-actions">
         <a class="button button-primary" href={mdpHref}>Start with the MDP</a>
+        <a class="button button-secondary" href={formalAssuranceHref}>Inspect formal assurance</a>
         <a class="button button-secondary" href={frameworkHref}>Read the framework</a>
       </div>
     </div>
