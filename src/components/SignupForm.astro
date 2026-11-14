@@ -34,7 +34,7 @@ const source = import.meta.env.PUBLIC_SIGNUP_SOURCE || 'usacc-interest-list';
     Express Interest
   </button>
 
-  <p class="signup-feedback" data-signup-feedback>
+  <p class="signup-feedback" data-signup-feedback role="status" aria-live="polite">
     We only use your email for project updates. The form is static-site friendly and posts
     directly to a configured Google Apps Script endpoint.
   </p>
@@ -102,8 +102,13 @@ const source = import.meta.env.PUBLIC_SIGNUP_SOURCE || 'usacc-interest-list';
           body: payload,
         });
 
-        form.reset();
-        setFeedback('Thanks. We will keep you posted as USACC develops.', 'success');
+        // no-cors returns an opaque response: the browser cannot tell whether
+        // the endpoint accepted or stored the submission. Retain the address
+        // so the visitor can retry without retyping it.
+        setFeedback(
+          'Your request was sent, but this page cannot confirm receipt. Please retry later if you need to.',
+          'neutral'
+        );
       } catch (error) {
         setFeedback('The signup request did not go through. Please try again.', 'error');
       } finally {

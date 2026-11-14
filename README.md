@@ -29,9 +29,9 @@ Environment variables:
 
 ## Google Apps Script
 
-The signup form uses a browser-side `fetch()` POST with `mode: "no-cors"` and `URLSearchParams` so it can submit cleanly to a standard Apps Script web app without introducing a server. Because the response is opaque in `no-cors` mode, the UI treats a dispatched request as success unless the browser reports a network failure.
+The signup form uses a browser-side `fetch()` POST with `mode: "no-cors"` and `URLSearchParams` so it can submit cleanly to a standard Apps Script web app without introducing a server. Because the response is opaque in `no-cors` mode, a completed browser request **does not prove that Apps Script received or stored the email**. The UI reports unconfirmed delivery, retains the entered email for retry, and announces feedback through an accessible live region. A confirmed-success experience would require an endpoint that supports verifiable CORS responses.
 
-An example Apps Script is included in [docs/google-apps-script.gs](/Users/maca5/codes/ores/us-anti-corruption-court-project/docs/google-apps-script.gs:1).
+An example Apps Script is included in [docs/google-apps-script.gs](docs/google-apps-script.gs).
 
 Typical setup:
 
